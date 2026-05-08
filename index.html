@@ -139,91 +139,7 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
 </div>
 
 <script>
-// ============================================================
-// 题库 — 格式: { cat, q, a: [正确答案...], hint, explain }
-// a 数组第一个为标准答案，其余为可接受的变体
-// ============================================================
-const BANK = [
-  // 系统信息
-  {cat:"系统信息", q:"查看内核版本号（仅版本号）", a:["uname -r"], explain:"uname -r 只输出内核版本，-a 输出全部信息"},
-  {cat:"系统信息", q:"查看主机名、内核版本、硬件架构等完整信息", a:["uname -a"], explain:"uname -a 是 --all 的缩写"},
-  {cat:"系统信息", q:"查看系统版本（如 LinxOS 6.0.99）的文件路径", a:["/etc/issue"], explain:"凝思系统版本号存在 /etc/issue 中"},
-  {cat:"系统信息", q:"查看系统序列号信息的文件路径", a:["/proc/cmdline"], explain:"/proc/cmdline 包含启动参数和序列号"},
-  {cat:"系统信息", q:"查看系统当前时间", a:["date"], explain:"直接输入 date 显示当前时间"},
-  {cat:"系统信息", q:"将系统时间设置为 2026/12/28 13:00:00", a:['date -s "2026/12/28 13:00:00"', "date -s '2026/12/28 13:00:00'"], explain:"date -s 后接引号括起的时间字符串"},
-  {cat:"系统信息", q:"立即关机（shutdown 方式）", a:["shutdown -h now"], explain:"-h 表示 halt，now 表示立即执行"},
-  {cat:"系统信息", q:"立即关机（一个单词命令）", a:["poweroff","halt","init 0"], explain:"poweroff / halt / init 0 均可关机"},
-  {cat:"系统信息", q:"立即重启（reboot 以外的方式）", a:["shutdown -r now","init 6"], explain:"shutdown -r now 或 init 6"},
-  {cat:"系统信息", q:"立即重启（最短命令）", a:["reboot"], explain:"reboot 是最常用的重启命令"},
-
-  // 网络管理
-  {cat:"网络管理", q:"查看所有网络连接（99系统常用）", a:["nmcli connection show","nmcli con show"], explain:"nmcli 是凝思99系统的网络管理命令"},
-  {cat:"网络管理", q:"查看所有网卡设备状态", a:["nmcli device status","nmcli dev status"], explain:"nmcli device status 列出网卡及其状态"},
-  {cat:"网络管理", q:"查看网卡 IP、MAC 地址和状态", a:["ifconfig"], explain:"ifconfig 显示网络接口配置"},
-
-  // 用户管理
-  {cat:"用户管理", q:"用户账号基本信息（用户名/UID/家目录等）存储在", a:["/etc/passwd"], explain:"/etc/passwd 每行一个用户，冒号分隔7个字段"},
-  {cat:"用户管理", q:"用户密码字符串和有效期存储在", a:["/etc/shadow"], explain:"/etc/shadow 是密码影子文件，权限更严格"},
-  {cat:"用户管理", q:"创建用户 testuser，指定 UID 为 1001", a:["useradd -u 1001 testuser"], explain:"useradd -u 指定 UID"},
-  {cat:"用户管理", q:"创建用户时指定宿主目录的选项", a:["-d"], hint:"useradd 的一个选项", explain:"useradd -d /home/xxx 指定宿主目录"},
-  {cat:"用户管理", q:"修改当前登录用户的密码（不指定用户名）", a:["passwd"], explain:"passwd 不加用户名时修改当前用户密码"},
-  {cat:"用户管理", q:"锁定用户账户的 usermod 选项", a:["-L","usermod -L"], hint:"一个字母选项", explain:"usermod -L 锁定，-U 解锁"},
-  {cat:"用户管理", q:"解锁用户账户的 usermod 选项", a:["-U","usermod -U"], hint:"一个字母选项", explain:"usermod -U 解锁账户"},
-  {cat:"用户管理", q:"删除用户 tom 并同时删除其宿主目录", a:["userdel -r tom"], explain:"-r 选项连宿主目录一并删除"},
-  {cat:"用户管理", q:"适用于凝思 60/80/99 系统的删除用户命令", a:["rmuser"], explain:"rmuser 是凝思专属命令，userdel 只适用42/99"},
-  {cat:"用户管理", q:"查询用户 tom 的 UID 和 GID", a:["id tom"], explain:"id 命令显示用户身份标识"},
-  {cat:"用户管理", q:"查询当前用户所属的组", a:["groups"], explain:"groups 不加参数查询当前用户的组"},
-
-  // 文件操作
-  {cat:"文件操作", q:"显示当前工作目录路径", a:["pwd"], explain:"pwd = Print Working Directory"},
-  {cat:"文件操作", q:"切换到 /etc 目录", a:["cd /etc"], explain:"cd = Change Directory"},
-  {cat:"文件操作", q:"以长格式显示当前目录所有文件（含隐藏文件）", a:["ls -la","ls -al"], explain:"-l 长格式，-a 显示隐藏文件"},
-  {cat:"文件操作", q:"统计 /var/log 目录占用空间（人类可读格式）", a:["du -ah /var/log","du -h /var/log"], explain:"du -ah 对每个文件都统计，-h 以 K/M/G 显示"},
-  {cat:"文件操作", q:"递归创建多级目录 /opt/a/b/c", a:["mkdir -p /opt/a/b/c"], explain:"-p 表示递归创建，不存在的父目录会一并创建"},
-  {cat:"文件操作", q:"创建空文件 test.txt", a:["touch test.txt"], explain:"touch 用于新建空文件或更新时间戳"},
-  {cat:"文件操作", q:"将 /etc/hosts 复制到 /tmp 并保留原文件属性", a:["cp -p /etc/hosts /tmp/"], explain:"-p 保持源文件权限、时间戳等属性"},
-  {cat:"文件操作", q:"递归复制整个 /opt/app 目录到 /backup", a:["cp -r /opt/app /backup","cp -rp /opt/app /backup"], explain:"-r 递归复制目录"},
-  {cat:"文件操作", q:"将 old.txt 重命名为 new.txt", a:["mv old.txt new.txt"], explain:"mv 源目标相同路径时相当于改名"},
-  {cat:"文件操作", q:"强制递归删除 /tmp/test 目录（不提示确认）", a:["rm -rf /tmp/test"], explain:"-r 递归，-f 强制不提示，危险命令！"},
-  {cat:"文件操作", q:"在 /var/log 下查找名为 syslog 的文件", a:["find /var/log -name syslog"], explain:"find 路径 -name 文件名"},
-  {cat:"文件操作", q:"查找大于 100MB 的文件", a:["find / -size +100M"], explain:"+100M 表示大于100M，-100M 表示小于"},
-  {cat:"文件操作", q:"显示文件全部内容", a:["cat"], hint:"一个命令名", explain:"cat 将文件内容全部输出到终端"},
-  {cat:"文件操作", q:"查看文件最后 20 行", a:["tail -n 20","tail -20"], explain:"tail -n 20 显示最后20行"},
-  {cat:"文件操作", q:"实时追踪日志文件新增内容", a:["tail -f"], hint:"tail 加一个选项", explain:"-f 是 follow 的缩写，实时跟踪文件变化"},
-  {cat:"文件操作", q:"查看文件前 10 行", a:["head","head -n 10","head -10"], explain:"head 默认显示前10行"},
-
-  // 权限管理
-  {cat:"权限管理", q:"r / w / x 对应的数字权限值分别是", a:["4 2 1","r=4 w=2 x=1"], hint:"三个数字用空格分隔", explain:"r=4, w=2, x=1，三者相加得到权限数字"},
-  {cat:"权限管理", q:"将 script.sh 权限设为 属主可读写执行、其他人只读（数字法）", a:["chmod 744 script.sh"], explain:"属主7=4+2+1，组4，其他4"},
-  {cat:"权限管理", q:"给 script.sh 的属主增加执行权限（符号法）", a:["chmod u+x script.sh"], explain:"u=属主，g=组，o=其他，a=所有"},
-  {cat:"权限管理", q:"递归修改 /opt/app 下所有文件权限为 644", a:["chmod -R 644 /opt/app"], explain:"-R 递归修改，644=属主读写+其他只读"},
-  {cat:"权限管理", q:"将 file.txt 的属主改为 alice，属组改为 dev", a:["chown alice:dev file.txt"], explain:"chown 用户:组 文件，冒号分隔"},
-  {cat:"权限管理", q:"递归修改 /var/www 目录归属为 www 用户", a:["chown -R www /var/www"], explain:"-R 递归修改目录及其所有内容"},
-
-  // vi编辑器
-  {cat:"vi编辑器", q:"vi 中删除当前行", a:["dd"], hint:"两个相同字母", explain:"dd 删除当前行，#dd 删除#行"},
-  {cat:"vi编辑器", q:"vi 中复制当前行", a:["yy"], hint:"两个相同字母", explain:"yy 复制当前行，p 粘贴"},
-  {cat:"vi编辑器", q:"vi 中撤销上一步操作", a:["u"], hint:"一个字母", explain:"u = undo，撤销；Ctrl+r 重做"},
-  {cat:"vi编辑器", q:"vi 中保存文件并退出", a:[":wq",":wq!"], hint:"末行模式命令", explain:":w 保存，:q 退出，:wq 一起"},
-  {cat:"vi编辑器", q:"vi 中强制退出不保存", a:[":q!"], hint:"末行模式命令带感叹号", explain:":q! 放弃修改强制退出"},
-  {cat:"vi编辑器", q:"vi 中从上而下搜索字符串 'error'", a:["/error"], hint:"/ 开头", explain:"/word 向下搜，?word 向上搜，n 下一个"},
-  {cat:"vi编辑器", q:"vi 中从命令模式在当前行后插入（光标后）", a:["a"], hint:"单个字母", explain:"a=光标后插入，i=光标前，o=下方新行"},
-  {cat:"vi编辑器", q:"vi 中删除光标处到行尾的所有字符", a:["d$"], hint:"d+符号", explain:"d$ 删到行尾，d^ 删到行首"},
-
-  // 定时任务
-  {cat:"定时任务", q:"查看当前用户的定时任务列表", a:["crontab -l"], explain:"crontab -l list，-e 编辑，-r 删除所有"},
-  {cat:"定时任务", q:"编辑当前用户的定时任务", a:["crontab -e"], explain:"crontab -e 打开编辑器修改任务"},
-  {cat:"定时任务", q:"删除当前用户的所有定时任务", a:["crontab -r"], explain:"crontab -r remove，谨慎使用"},
-  {cat:"定时任务", q:"crontab 格式中，5个字段依次代表什么（用/分隔）", a:["分/时/日/月/周","分钟/小时/日/月/周"], hint:"5个字段，用/分隔", explain:"分(0-59) 时(0-23) 日(1-31) 月(1-12) 周(1-7)"},
-  {cat:"定时任务", q:"每天凌晨2点执行 /backup.sh 的 crontab 写法", a:["0 2 * * * /backup.sh"], explain:"分=0 时=2 日月周都是* 表示每天"},
-  {cat:"定时任务", q:"每小时的第15分钟执行 /check.sh", a:["15 * * * * /check.sh"], explain:"分=15，其余*表示每小时都执行"},
-
-  // 日志路径
-  {cat:"日志路径", q:"系统主日志文件路径（凝思系统）", a:["/var/log/syslog","/var/log/messages"], explain:"不同发行版可能用 syslog 或 messages"},
-  {cat:"日志路径", q:"内核和驱动相关日志路径", a:["/var/log/kern.log"], explain:"kern.log 记录内核活动和硬件问题"},
-  {cat:"日志路径", q:"系统审计日志（记录用户操作）路径", a:["/var/log/audit.log"], explain:"audit.log 用于安全审计和合规检查"},
-  {cat:"日志路径", q:"凝思系统日志统一存放在哪个目录", a:["/var/log/"], explain:"/var/log/ 是 Linux 标准日志目录"},
-];
+let BANK = [];
 
 // ============================================================
 // 运行时状态
@@ -347,8 +263,13 @@ document.getElementById('cmdInput').addEventListener('keydown', e => {
   if(e.key === 'Escape'){ e.preventDefault(); skipQ(); }
 });
 
-// 启动
-buildQueue(); showQ();
+// 启动：从 questions.json 加载题库
+fetch('questions.json')
+  .then(r => r.json())
+  .then(data => { BANK = data; buildQueue(); showQ(); })
+  .catch(() => {
+    document.getElementById('prompt').textContent = '题库加载失败，请刷新重试';
+  });
 </script>
 </body>
 </html>

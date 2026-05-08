@@ -21,7 +21,7 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
 .prog-wrap{height:3px;background:#1a1a2e}
 .prog-bar{height:100%;background:linear-gradient(90deg,#7c83fd,#4caf50);transition:width .4s}
 /* 主区域 */
-.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px 160px}
 /* 卡片 */
 .card{width:100%;max-width:600px}
 .category-badge{display:inline-block;background:#2a2a4a;color:#7c83fd;font-size:11px;padding:3px 10px;border-radius:12px;margin-bottom:12px;font-weight:600;letter-spacing:.5px}
@@ -41,19 +41,20 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
 .feedback.bad{background:#1a0a0a;border:1px solid #ef5350;color:#ef9a9a}
 .feedback .correct-answer{font-family:monospace;font-size:16px;color:#fff;margin-top:4px}
 .feedback .explain{font-size:13px;color:#aaa;margin-top:6px}
-/* 按钮 */
-.btns{display:flex;gap:10px}
-.btn{flex:1;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+/* 按钮（移至固定操作栏，保留原类名供 JS 使用） */
+.action-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0f0f1a;border-top:1px solid #2a2a4a;padding:10px 16px 10px}
+.btns{display:flex;gap:10px;max-width:600px;margin:0 auto}
+.btn{flex:1;padding:0;height:52px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
 .btn-check{background:#7c83fd;color:#fff}
-.btn-check:hover{background:#6c73ed}
-.btn-skip{background:#2a2a4a;color:#888}
-.btn-skip:hover{background:#3a3a5a;color:#aaa}
+.btn-check:active{background:#5c63cd}
+.btn-skip{background:#2a2a4a;color:#aaa}
+.btn-skip:active{background:#3a3a5a}
 .btn-next{background:#4caf50;color:#fff;display:none}
-.btn-next:hover{background:#43a047}
+.btn-next:active{background:#388e3c}
 /* 快捷提示 */
-.shortcut{text-align:center;font-size:12px;color:#555;margin-top:12px}
-/* 筛选栏 */
-.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px 16px;background:#1a1a2e;border-top:1px solid #2a2a4a}
+.shortcut{display:none}
+/* 筛选栏（嵌入 action-bar 内） */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;max-width:600px;margin:0 auto}
 .filter-btn{padding:5px 14px;border:1px solid #2a2a4a;border-radius:20px;font-size:12px;cursor:pointer;background:transparent;color:#888;transition:all .15s}
 .filter-btn.active{background:#7c83fd;border-color:#7c83fd;color:#fff;font-weight:600}
 /* 结束页 */
@@ -100,12 +101,6 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
       <div class="explain" id="explainText"></div>
     </div>
 
-    <div class="btns">
-      <button class="btn btn-skip" id="btnSkip" onclick="skipQ()">跳过</button>
-      <button class="btn btn-check" id="btnCheck" onclick="checkAnswer()">确认 ↵</button>
-      <button class="btn btn-next" id="btnNext" onclick="nextQ()">下一题 →</button>
-    </div>
-    <div class="shortcut">Esc 跳过 · Enter 确认/下一题</div>
   </div>
 </div>
 
@@ -124,16 +119,23 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
   </div>
 </div>
 
-<div class="filter-bar">
-  <button class="filter-btn active" data-cat="all" onclick="setFilter(this)">全部</button>
-  <button class="filter-btn" data-cat="系统信息" onclick="setFilter(this)">系统信息</button>
-  <button class="filter-btn" data-cat="用户管理" onclick="setFilter(this)">用户管理</button>
-  <button class="filter-btn" data-cat="文件操作" onclick="setFilter(this)">文件操作</button>
-  <button class="filter-btn" data-cat="权限管理" onclick="setFilter(this)">权限管理</button>
-  <button class="filter-btn" data-cat="vi编辑器" onclick="setFilter(this)">vi编辑器</button>
-  <button class="filter-btn" data-cat="定时任务" onclick="setFilter(this)">定时任务</button>
-  <button class="filter-btn" data-cat="日志路径" onclick="setFilter(this)">日志路径</button>
-  <button class="filter-btn" data-cat="网络管理" onclick="setFilter(this)">网络管理</button>
+<div class="action-bar">
+  <div class="btns">
+    <button class="btn btn-skip" id="btnSkip" onclick="skipQ()">跳过</button>
+    <button class="btn btn-check" id="btnCheck" onclick="checkAnswer()">确认 ↵</button>
+    <button class="btn btn-next" id="btnNext" onclick="nextQ()">下一题 →</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="all" onclick="setFilter(this)">全部</button>
+    <button class="filter-btn" data-cat="系统信息" onclick="setFilter(this)">系统信息</button>
+    <button class="filter-btn" data-cat="用户管理" onclick="setFilter(this)">用户管理</button>
+    <button class="filter-btn" data-cat="文件操作" onclick="setFilter(this)">文件操作</button>
+    <button class="filter-btn" data-cat="权限管理" onclick="setFilter(this)">权限管理</button>
+    <button class="filter-btn" data-cat="vi编辑器" onclick="setFilter(this)">vi编辑器</button>
+    <button class="filter-btn" data-cat="定时任务" onclick="setFilter(this)">定时任务</button>
+    <button class="filter-btn" data-cat="日志路径" onclick="setFilter(this)">日志路径</button>
+    <button class="filter-btn" data-cat="网络管理" onclick="setFilter(this)">网络管理</button>
+  </div>
 </div>
 
 <script>

@@ -3,412 +3,350 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>凝思安全操作系统培训考核试卷</title>
+<title>凝思命令训练 · LinxOS Drill</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6fa; color: #2c3e50; line-height: 1.7; }
-  .cover { background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%); color: white; padding: 48px 32px; text-align: center; }
-  .cover h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-  .cover p { opacity: .85; font-size: 14px; }
-  .info-bar { background: white; padding: 20px 32px; display: flex; gap: 24px; flex-wrap: wrap; border-bottom: 1px solid #e0e0e0; }
-  .info-bar label { font-size: 14px; color: #666; }
-  .info-bar input { border: none; border-bottom: 1.5px solid #90caf9; padding: 2px 6px; font-size: 15px; width: 140px; outline: none; background: transparent; }
-  .container { max-width: 860px; margin: 28px auto; padding: 0 16px 100px; }
-  .section { background: white; border-radius: 10px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-  .section-title { font-size: 18px; font-weight: 700; color: #1565c0; border-left: 4px solid #1565c0; padding-left: 12px; margin-bottom: 22px; }
-  .question { margin-bottom: 26px; }
-  .question-label { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #1a237e; }
-  .options label { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-bottom: 4px; transition: background .15s; }
-  .options label:hover { background: #e3f2fd; }
-  .options input[type=radio], .options input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: #1565c0; }
-  .fill-input { width: 100%; border: 1.5px solid #bbdefb; border-radius: 6px; padding: 8px 12px; font-size: 14px; outline: none; resize: vertical; min-height: 38px; font-family: inherit; transition: border-color .15s; }
-  .fill-input:focus { border-color: #1565c0; }
-  textarea.fill-input { min-height: 90px; }
-  .code-block { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; font-family: "SF Mono","Consolas",monospace; font-size: 13px; color: #37474f; margin: 8px 0; white-space: pre-wrap; }
-  .upload-area { border: 2px dashed #90caf9; border-radius: 8px; padding: 18px; text-align: center; color: #64b5f6; cursor: pointer; transition: all .2s; margin-top: 8px; }
-  .upload-area:hover { border-color: #1565c0; background: #e3f2fd; }
-  .upload-area input[type=file] { display: none; }
-  .upload-icon { font-size: 28px; margin-bottom: 6px; }
-  .file-list { margin-top: 10px; }
-  .file-item { background: #e8f5e9; padding: 5px 10px; border-radius: 4px; margin-top: 4px; font-size: 13px; color: #2e7d32; }
-  .preview-img { max-width: 100%; border-radius: 6px; margin-top: 8px; display: none; border: 1px solid #e0e0e0; }
-  .score-hint { font-size: 12px; color: #999; margin-left: 8px; font-weight: 400; }
-  .tag { display: inline-block; background: #e3f2fd; color: #1565c0; font-size: 11px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
-  .notice { background: #fff8e1; border-left: 4px solid #f9a825; padding: 10px 16px; border-radius: 4px; font-size: 13px; color: #5d4037; margin-bottom: 20px; }
-  .answer-block { display: none; margin-top: 10px; padding: 10px 14px; border-radius: 6px; font-size: 13.5px; }
-  .answer-block.correct { background: #e8f5e9; border-left: 3px solid #43a047; color: #1b5e20; }
-  .answer-block.wrong { background: #ffebee; border-left: 3px solid #e53935; color: #b71c1c; }
-  .answer-key { background: #e3f2fd; border-left: 3px solid #1565c0; color: #0d47a1; padding: 10px 14px; border-radius: 6px; font-size: 13.5px; margin-top: 8px; display: none; }
-  .options label.correct-ans { background: #e8f5e9 !important; font-weight: 600; }
-  .options label.wrong-ans { background: #ffebee !important; }
-  .submit-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e0e0; padding: 14px 32px; display: flex; justify-content: center; gap: 12px; z-index: 100; box-shadow: 0 -2px 8px rgba(0,0,0,.08); flex-wrap: wrap; }
-  .btn { padding: 10px 28px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all .2s; }
-  .btn-primary { background: #1565c0; color: white; }
-  .btn-primary:hover { background: #0d47a1; }
-  .btn-success { background: #2e7d32; color: white; }
-  .btn-success:hover { background: #1b5e20; }
-  .btn-secondary { background: #f5f5f5; color: #555; border: 1px solid #ddd; }
-  .progress-bar { height: 4px; background: #e3f2fd; }
-  .progress-fill { height: 100%; background: #1565c0; transition: width .3s; width: 0%; }
-  .score-board { display: none; background: linear-gradient(135deg,#1565c0,#0d47a1); color: white; border-radius: 10px; padding: 24px; text-align: center; margin-bottom: 24px; }
-  .score-board h2 { font-size: 36px; margin-bottom: 6px; }
-  .score-board p { opacity: .9; font-size: 14px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column}
+/* 顶栏 */
+.topbar{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a4a}
+.topbar h1{font-size:16px;color:#7c83fd;font-weight:700;letter-spacing:.5px}
+.stats{display:flex;gap:16px;font-size:13px}
+.stat{text-align:center}
+.stat-val{font-size:20px;font-weight:700}
+.stat-val.green{color:#4caf50}
+.stat-val.red{color:#ef5350}
+.stat-val.blue{color:#7c83fd}
+.stat-label{font-size:10px;color:#888;margin-top:2px}
+/* 进度条 */
+.prog-wrap{height:3px;background:#1a1a2e}
+.prog-bar{height:100%;background:linear-gradient(90deg,#7c83fd,#4caf50);transition:width .4s}
+/* 主区域 */
+.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+/* 卡片 */
+.card{width:100%;max-width:600px}
+.category-badge{display:inline-block;background:#2a2a4a;color:#7c83fd;font-size:11px;padding:3px 10px;border-radius:12px;margin-bottom:12px;font-weight:600;letter-spacing:.5px}
+.prompt{font-size:22px;font-weight:600;color:#fff;line-height:1.5;margin-bottom:8px;min-height:64px}
+.hint{font-size:13px;color:#888;margin-bottom:24px;min-height:18px}
+/* 输入区 */
+.input-wrap{position:relative;margin-bottom:16px}
+.cmd-input{width:100%;background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:14px 16px;font-size:18px;font-family:"SF Mono","Consolas",monospace;color:#a5d6a7;outline:none;transition:border-color .2s;caret-color:#7c83fd}
+.cmd-input:focus{border-color:#7c83fd}
+.cmd-input.correct{border-color:#4caf50;background:#0d2010}
+.cmd-input.wrong{border-color:#ef5350;background:#1a0a0a;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* 反馈 */
+.feedback{min-height:56px;margin-bottom:20px;border-radius:8px;padding:12px 16px;font-size:14px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#0d2010;border:1px solid #4caf50;color:#a5d6a7}
+.feedback.bad{background:#1a0a0a;border:1px solid #ef5350;color:#ef9a9a}
+.feedback .correct-answer{font-family:monospace;font-size:16px;color:#fff;margin-top:4px}
+.feedback .explain{font-size:13px;color:#aaa;margin-top:6px}
+/* 按钮 */
+.btns{display:flex;gap:10px}
+.btn{flex:1;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-check{background:#7c83fd;color:#fff}
+.btn-check:hover{background:#6c73ed}
+.btn-skip{background:#2a2a4a;color:#888}
+.btn-skip:hover{background:#3a3a5a;color:#aaa}
+.btn-next{background:#4caf50;color:#fff;display:none}
+.btn-next:hover{background:#43a047}
+/* 快捷提示 */
+.shortcut{text-align:center;font-size:12px;color:#555;margin-top:12px}
+/* 筛选栏 */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px 16px;background:#1a1a2e;border-top:1px solid #2a2a4a}
+.filter-btn{padding:5px 14px;border:1px solid #2a2a4a;border-radius:20px;font-size:12px;cursor:pointer;background:transparent;color:#888;transition:all .15s}
+.filter-btn.active{background:#7c83fd;border-color:#7c83fd;color:#fff;font-weight:600}
+/* 结束页 */
+.end-screen{display:none;text-align:center;padding:40px 20px}
+.end-screen h2{font-size:36px;font-weight:700;color:#7c83fd;margin-bottom:8px}
+.end-screen p{color:#888;margin-bottom:24px;font-size:15px}
+.end-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:360px;margin:0 auto 32px}
+.end-stat{background:#1a1a2e;border-radius:10px;padding:16px 8px;border:1px solid #2a2a4a}
+.end-stat-val{font-size:28px;font-weight:700}
+.end-stat-lab{font-size:11px;color:#888;margin-top:4px}
+.btn-restart{background:#7c83fd;color:#fff;padding:12px 40px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer}
+/* 错题回顾 */
+.review-list{max-width:600px;width:100%;margin:0 auto;text-align:left}
+.review-item{background:#1a1a2e;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:3px solid #ef5350}
+.review-q{font-size:14px;color:#aaa;margin-bottom:6px}
+.review-a{font-family:monospace;font-size:15px;color:#a5d6a7}
 </style>
 </head>
 <body>
-<div class="cover">
-  <h1>凝思安全操作系统培训考核</h1>
-  <p>北京凝思软件 · V6.0.99 · 基础命令与日常操作</p>
-</div>
-<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="info-bar">
-  <div><label>姓名：<input type="text" id="name" placeholder="请输入姓名"></label></div>
-  <div><label>部门：<input type="text" id="dept" placeholder="请输入部门"></label></div>
-  <div><label>日期：<input type="date" id="date"></label></div>
-</div>
 
-<div class="container">
-<div class="score-board" id="scoreBoard">
-  <h2 id="scoreTxt">0 / 50</h2>
-  <p id="scoreDesc">客观题得分（满分50分）</p>
-</div>
-
-<div class="section">
-  <div class="section-title">第一部分 · 单选题 <span class="score-hint">（每题3分，共30分）</span></div>
-
-  <div class="question">
-    <div class="question-label">1. 凝思安全操作系统由哪家公司自主研发？</div>
-    <div class="options" id="opt1">
-      <label><input type="radio" name="q1" value="A"> A. 华为技术有限公司</label>
-      <label><input type="radio" name="q1" value="B"> B. 北京凝思软件股份有限公司</label>
-      <label><input type="radio" name="q1" value="C"> C. 中科方德软件有限公司</label>
-      <label><input type="radio" name="q1" value="D"> D. 麒麟软件有限公司</label>
-    </div><div class="answer-block" id="ans1"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">2. 凝思 V6.0.99 支持的硬件架构是？</div>
-    <div class="options" id="opt2">
-      <label><input type="radio" name="q2" value="A"> A. 仅 x86_64</label>
-      <label><input type="radio" name="q2" value="B"> B. 仅 ARM64</label>
-      <label><input type="radio" name="q2" value="C"> C. x86_64 和 ARM64</label>
-      <label><input type="radio" name="q2" value="D"> D. MIPS 和 RISC-V</label>
-    </div><div class="answer-block" id="ans2"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">3. Linux 命令中以 <code>--</code> 开头的选项是？</div>
-    <div class="options" id="opt3">
-      <label><input type="radio" name="q3" value="A"> A. 短格式选项（单字符）</label>
-      <label><input type="radio" name="q3" value="B"> B. 长格式选项（多字符）</label>
-      <label><input type="radio" name="q3" value="C"> C. 命令参数</label>
-      <label><input type="radio" name="q3" value="D"> D. 环境变量</label>
-    </div><div class="answer-block" id="ans3"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">4. 哪个命令可以<strong>实时追踪</strong>日志新增内容？</div>
-    <div class="options" id="opt4">
-      <label><input type="radio" name="q4" value="A"> A. <code>cat /var/log/syslog</code></label>
-      <label><input type="radio" name="q4" value="B"> B. <code>head -n 20 /var/log/syslog</code></label>
-      <label><input type="radio" name="q4" value="C"> C. <code>tail -f /var/log/syslog</code></label>
-      <label><input type="radio" name="q4" value="D"> D. <code>less /var/log/syslog</code></label>
-    </div><div class="answer-block" id="ans4"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">5. 用户密码字符串和有效期存储在？</div>
-    <div class="options" id="opt5">
-      <label><input type="radio" name="q5" value="A"> A. <code>/etc/passwd</code></label>
-      <label><input type="radio" name="q5" value="B"> B. <code>/etc/group</code></label>
-      <label><input type="radio" name="q5" value="C"> C. <code>/etc/shadow</code></label>
-      <label><input type="radio" name="q5" value="D"> D. <code>/etc/sudoers</code></label>
-    </div><div class="answer-block" id="ans5"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">6. <code>5 * * * * /script.sh</code> 表示？</div>
-    <div class="options" id="opt6">
-      <label><input type="radio" name="q6" value="A"> A. 每天第5小时执行</label>
-      <label><input type="radio" name="q6" value="B"> B. 每小时的第5分钟执行</label>
-      <label><input type="radio" name="q6" value="C"> C. 每月第5天执行</label>
-      <label><input type="radio" name="q6" value="D"> D. 每周第5天执行</label>
-    </div><div class="answer-block" id="ans6"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">7. vi 编辑器从命令模式进入输入模式按？</div>
-    <div class="options" id="opt7">
-      <label><input type="radio" name="q7" value="A"> A. <code>Esc</code></label>
-      <label><input type="radio" name="q7" value="B"> B. <code>:</code></label>
-      <label><input type="radio" name="q7" value="C"> C. <code>a</code> / <code>i</code> / <code>o</code></label>
-      <label><input type="radio" name="q7" value="D"> D. <code>q!</code></label>
-    </div><div class="answer-block" id="ans7"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">8. 关于 <code>rm -rf</code>，正确的是？</div>
-    <div class="options" id="opt8">
-      <label><input type="radio" name="q8" value="A"> A. 只删除空目录</label>
-      <label><input type="radio" name="q8" value="B"> B. 强制递归删除，不提示确认</label>
-      <label><input type="radio" name="q8" value="C"> C. 移动到回收站</label>
-      <label><input type="radio" name="q8" value="D"> D. 仅删除文件，不影响目录</label>
-    </div><div class="answer-block" id="ans8"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">9. 凝思99系统网络配置推荐命令？</div>
-    <div class="options" id="opt9">
-      <label><input type="radio" name="q9" value="A"> A. <code>ifconfig</code></label>
-      <label><input type="radio" name="q9" value="B"> B. <code>nmcli</code></label>
-      <label><input type="radio" name="q9" value="C"> C. <code>netstat</code></label>
-      <label><input type="radio" name="q9" value="D"> D. <code>route</code></label>
-    </div><div class="answer-block" id="ans9"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">10. 系统审计日志存放在？</div>
-    <div class="options" id="opt10">
-      <label><input type="radio" name="q10" value="A"> A. <code>/var/log/syslog</code></label>
-      <label><input type="radio" name="q10" value="B"> B. <code>/var/log/kern.log</code></label>
-      <label><input type="radio" name="q10" value="C"> C. <code>/var/log/audit.log</code></label>
-      <label><input type="radio" name="q10" value="D"> D. <code>/var/log/boot.log</code></label>
-    </div><div class="answer-block" id="ans10"></div>
+<div class="topbar">
+  <h1>⚡ LinxOS 命令训练</h1>
+  <div class="stats">
+    <div class="stat"><div class="stat-val green" id="sCorrect">0</div><div class="stat-label">正确</div></div>
+    <div class="stat"><div class="stat-val red" id="sWrong">0</div><div class="stat-label">错误</div></div>
+    <div class="stat"><div class="stat-val blue" id="sLeft">0</div><div class="stat-label">剩余</div></div>
   </div>
 </div>
+<div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
 
-<div class="section">
-  <div class="section-title">第二部分 · 多选题 <span class="score-hint">（每题5分，共20分）</span></div>
+<div class="main" id="mainView">
+  <div class="card">
+    <div class="category-badge" id="catBadge">系统信息</div>
+    <div class="prompt" id="prompt">正在加载题目...</div>
+    <div class="hint" id="hintText"></div>
 
-  <div class="question">
-    <div class="question-label">11. 以下哪些命令可立即关机？<span class="tag">多选</span></div>
-    <div class="options" id="opt11">
-      <label><input type="checkbox" name="q11" value="A"> A. <code>shutdown -h now</code></label>
-      <label><input type="checkbox" name="q11" value="B"> B. <code>poweroff</code></label>
-      <label><input type="checkbox" name="q11" value="C"> C. <code>init 0</code></label>
-      <label><input type="checkbox" name="q11" value="D"> D. <code>reboot</code></label>
-      <label><input type="checkbox" name="q11" value="E"> E. <code>halt</code></label>
-    </div><div class="answer-block" id="ans11"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">12. <code>useradd</code> 选项含义正确的是？<span class="tag">多选</span></div>
-    <div class="options" id="opt12">
-      <label><input type="checkbox" name="q12" value="A"> A. <code>-u</code>：指定 UID</label>
-      <label><input type="checkbox" name="q12" value="B"> B. <code>-d</code>：指定宿主目录</label>
-      <label><input type="checkbox" name="q12" value="C"> C. <code>-e</code>：指定账号失效时间</label>
-      <label><input type="checkbox" name="q12" value="D"> D. <code>-g</code>：指定基本组</label>
-      <label><input type="checkbox" name="q12" value="E"> E. <code>-r</code>：连宿主目录一并删除</label>
-    </div><div class="answer-block" id="ans12"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">13. vi 命令模式下操作正确的是？<span class="tag">多选</span></div>
-    <div class="options" id="opt13">
-      <label><input type="checkbox" name="q13" value="A"> A. <code>dd</code>：删除当前行</label>
-      <label><input type="checkbox" name="q13" value="B"> B. <code>yy</code>：复制当前行</label>
-      <label><input type="checkbox" name="q13" value="C"> C. <code>u</code>：撤销操作</label>
-      <label><input type="checkbox" name="q13" value="D"> D. <code>/word</code>：向下查找</label>
-      <label><input type="checkbox" name="q13" value="E"> E. <code>:q!</code>：保存并退出</label>
-    </div><div class="answer-block" id="ans13"></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">14. 关于 <code>chmod</code> 正确的是？<span class="tag">多选</span></div>
-    <div class="options" id="opt14">
-      <label><input type="checkbox" name="q14" value="A"> A. <code>chmod 755 file</code> 数字法设置权限</label>
-      <label><input type="checkbox" name="q14" value="B"> B. <code>chmod u+x file</code> 为属主增加执行权限</label>
-      <label><input type="checkbox" name="q14" value="C"> C. <code>r=4, w=2, x=1</code></label>
-      <label><input type="checkbox" name="q14" value="D"> D. <code>chmod -R 644 dir</code> 递归修改</label>
-      <label><input type="checkbox" name="q14" value="E"> E. <code>chmod</code> 可修改文件归属用户</label>
-    </div><div class="answer-block" id="ans14"></div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">第三部分 · 填空题 <span class="score-hint">（每空2分，共20分）</span></div>
-
-  <div class="question">
-    <div class="question-label">15. 查看系统版本信息的文件路径：</div>
-    <input type="text" class="fill-input" id="q15" placeholder="请填写完整路径">
-    <div class="answer-key" id="key15">✅ 参考答案：<code>/etc/issue</code></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">16. crontab 五个 <code>*</code> 依次代表（填写各位含义）：</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-      <input type="text" class="fill-input" id="q16a" placeholder="第1个*" style="width:110px">
-      <input type="text" class="fill-input" id="q16b" placeholder="第2个*" style="width:110px">
-      <input type="text" class="fill-input" id="q16c" placeholder="第3个*" style="width:110px">
-      <input type="text" class="fill-input" id="q16d" placeholder="第4个*" style="width:110px">
-      <input type="text" class="fill-input" id="q16e" placeholder="第5个*" style="width:110px">
-    </div>
-    <div class="answer-key" id="key16">✅ 参考答案：分钟(0-59)、小时(0-23)、日(1-31)、月(1-12)、周(1-7)</div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">17. 设 test.sh 权限为属主可读写执行、其他人只读，数字法命令：</div>
-    <input type="text" class="fill-input" id="q17" placeholder="chmod _____ test.sh">
-    <div class="answer-key" id="key17">✅ 参考答案：<code>chmod 744 test.sh</code></div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">18. <code>usermod -L</code> 的作用：___；<code>-U</code> 的作用：___</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-      <input type="text" class="fill-input" id="q18a" placeholder="-L 的作用" style="width:48%">
-      <input type="text" class="fill-input" id="q18b" placeholder="-U 的作用" style="width:48%">
-    </div>
-    <div class="answer-key" id="key18">✅ 参考答案：-L 锁定用户账户；-U 解锁用户账户</div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">第四部分 · 简答题 <span class="score-hint">（每题10分，共20分）</span></div>
-
-  <div class="question">
-    <div class="question-label">19. 简述 vi 编辑器的三种工作模式及切换方式。</div>
-    <textarea class="fill-input" id="q19" placeholder="请在此作答..."></textarea>
-    <div class="answer-key" id="key19">✅ 参考答案：三种模式：命令模式、输入模式、末行模式。切换：命令模式→输入模式按 a/i/o；输入模式→命令模式按 Esc；命令模式→末行模式按 :；末行模式→命令模式按 Esc。</div>
-  </div>
-
-  <div class="question">
-    <div class="question-label">20. 描述故障排查核心方法论（≥4条），并以"服务无法启动"为例写出排查命令。</div>
-    <textarea class="fill-input" id="q20" placeholder="请在此作答..."></textarea>
-    <div class="answer-key" id="key20">✅ 参考答案：先现象后本质、先外后内、先易后难、先共性后个性。服务无法启动：① systemctl status 服务名 ② journalctl -u 服务名 -n 50 ③ 检查配置文件 ④ ss -tlnp 查端口占用。</div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">第五部分 · 实操题 <span class="score-hint">（10分）</span></div>
-  <div class="notice">完成以下操作后，拍照上传终端截图即可。</div>
-
-  <div class="question">
-    <div class="question-label">21. 按顺序完成以下操作：</div>
-    <div class="code-block">1. 在 /tmp 目录下创建 exam_你的姓名 目录
-2. 在该目录创建 hello.txt，写入"Hello LinxOS"
-3. 修改 hello.txt 权限为 644
-4. cat 查看文件内容
-5. 创建定时任务：每天 23:00 将 /var/log/syslog 备份到 /tmp/syslog_backup
-6. crontab -l 查看定时任务列表</div>
-
-    <div style="margin-top:16px;">
-      <p style="font-size:14px;margin-bottom:8px;font-weight:600;">📸 上传终端操作截图：</p>
-      <div class="upload-area" onclick="document.getElementById('up1').click()">
-        <div class="upload-icon">📷</div>
-        <div>点击拍照或选择图片</div>
-        <input type="file" id="up1" accept="image/*" capture="environment" onchange="handleImg(this,'pv1','fl1')">
-      </div>
-      <div id="fl1" class="file-list"></div>
-      <img id="pv1" class="preview-img">
+    <div class="input-wrap">
+      <input type="text" class="cmd-input" id="cmdInput" placeholder="输入命令或路径，回车确认" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     </div>
 
-    <div style="margin-top:16px;">
-      <p style="font-size:14px;margin-bottom:8px;font-weight:600;">📸 上传 crontab -l 截图：</p>
-      <div class="upload-area" onclick="document.getElementById('up2').click()">
-        <div class="upload-icon">📷</div>
-        <div>点击拍照或选择图片</div>
-        <input type="file" id="up2" accept="image/*" capture="environment" onchange="handleImg(this,'pv2','fl2')">
-      </div>
-      <div id="fl2" class="file-list"></div>
-      <img id="pv2" class="preview-img">
+    <div class="feedback" id="feedback">
+      <div id="feedbackMsg"></div>
+      <div class="correct-answer" id="correctAnswer"></div>
+      <div class="explain" id="explainText"></div>
     </div>
-    <div class="answer-key" id="key21">✅ 参考命令：mkdir /tmp/exam_姓名 → echo "Hello LinxOS" > hello.txt → chmod 644 hello.txt → cat hello.txt → crontab -e 写入 "0 23 * * * cp /var/log/syslog /tmp/syslog_backup" → crontab -l</div>
+
+    <div class="btns">
+      <button class="btn btn-skip" id="btnSkip" onclick="skipQ()">跳过</button>
+      <button class="btn btn-check" id="btnCheck" onclick="checkAnswer()">确认 ↵</button>
+      <button class="btn btn-next" id="btnNext" onclick="nextQ()">下一题 →</button>
+    </div>
+    <div class="shortcut">Esc 跳过 · Enter 确认/下一题</div>
   </div>
 </div>
+
+<div class="end-screen" id="endView">
+  <h2 id="endEmoji">🎉</h2>
+  <p id="endTitle">本轮训练完成</p>
+  <div class="end-grid">
+    <div class="end-stat"><div class="end-stat-val green" id="eCorrect">0</div><div class="end-stat-lab">答对</div></div>
+    <div class="end-stat"><div class="end-stat-val red" id="eWrong">0</div><div class="end-stat-lab">答错/跳过</div></div>
+    <div class="end-stat"><div class="end-stat-val blue" id="eRate">0%</div><div class="end-stat-lab">正确率</div></div>
+  </div>
+  <button class="btn-restart" onclick="restart()">再练一遍</button>
+  <div style="margin-top:32px">
+    <h3 style="color:#ef5350;margin-bottom:12px;font-size:14px">❌ 错题回顾</h3>
+    <div class="review-list" id="reviewList"></div>
+  </div>
 </div>
 
-<div class="submit-bar">
-  <button class="btn btn-secondary" onclick="clearForm()">清空重填</button>
-  <button class="btn btn-primary" onclick="submitExam()">提交并查看答案</button>
-  <button class="btn btn-success" onclick="downloadAnswers()">下载答卷</button>
+<div class="filter-bar">
+  <button class="filter-btn active" data-cat="all" onclick="setFilter(this)">全部</button>
+  <button class="filter-btn" data-cat="系统信息" onclick="setFilter(this)">系统信息</button>
+  <button class="filter-btn" data-cat="用户管理" onclick="setFilter(this)">用户管理</button>
+  <button class="filter-btn" data-cat="文件操作" onclick="setFilter(this)">文件操作</button>
+  <button class="filter-btn" data-cat="权限管理" onclick="setFilter(this)">权限管理</button>
+  <button class="filter-btn" data-cat="vi编辑器" onclick="setFilter(this)">vi编辑器</button>
+  <button class="filter-btn" data-cat="定时任务" onclick="setFilter(this)">定时任务</button>
+  <button class="filter-btn" data-cat="日志路径" onclick="setFilter(this)">日志路径</button>
+  <button class="filter-btn" data-cat="网络管理" onclick="setFilter(this)">网络管理</button>
 </div>
 
 <script>
-const ANS = { q1:'B',q2:'C',q3:'B',q4:'C',q5:'C',q6:'B',q7:'C',q8:'B',q9:'B',q10:'C',
-  q11:['A','B','C','E'],q12:['A','B','C','D'],q13:['A','B','C','D'],q14:['A','B','C','D'] };
-const LABEL = { q1:'B. 北京凝思软件',q2:'C. x86_64 和 ARM64',q3:'B. 长格式选项',
-  q4:'C. tail -f',q5:'C. /etc/shadow',q6:'B. 每小时第5分钟',q7:'C. a/i/o',
-  q8:'B. 强制递归删除',q9:'B. nmcli',q10:'C. /var/log/audit.log',
-  q11:'A B C E',q12:'A B C D',q13:'A B C D',q14:'A B C D' };
+// ============================================================
+// 题库 — 格式: { cat, q, a: [正确答案...], hint, explain }
+// a 数组第一个为标准答案，其余为可接受的变体
+// ============================================================
+const BANK = [
+  // 系统信息
+  {cat:"系统信息", q:"查看内核版本号（仅版本号）", a:["uname -r"], explain:"uname -r 只输出内核版本，-a 输出全部信息"},
+  {cat:"系统信息", q:"查看主机名、内核版本、硬件架构等完整信息", a:["uname -a"], explain:"uname -a 是 --all 的缩写"},
+  {cat:"系统信息", q:"查看系统版本（如 LinxOS 6.0.99）的文件路径", a:["/etc/issue"], explain:"凝思系统版本号存在 /etc/issue 中"},
+  {cat:"系统信息", q:"查看系统序列号信息的文件路径", a:["/proc/cmdline"], explain:"/proc/cmdline 包含启动参数和序列号"},
+  {cat:"系统信息", q:"查看系统当前时间", a:["date"], explain:"直接输入 date 显示当前时间"},
+  {cat:"系统信息", q:"将系统时间设置为 2026/12/28 13:00:00", a:['date -s "2026/12/28 13:00:00"', "date -s '2026/12/28 13:00:00'"], explain:"date -s 后接引号括起的时间字符串"},
+  {cat:"系统信息", q:"立即关机（shutdown 方式）", a:["shutdown -h now"], explain:"-h 表示 halt，now 表示立即执行"},
+  {cat:"系统信息", q:"立即关机（一个单词命令）", a:["poweroff","halt","init 0"], explain:"poweroff / halt / init 0 均可关机"},
+  {cat:"系统信息", q:"立即重启（reboot 以外的方式）", a:["shutdown -r now","init 6"], explain:"shutdown -r now 或 init 6"},
+  {cat:"系统信息", q:"立即重启（最短命令）", a:["reboot"], explain:"reboot 是最常用的重启命令"},
 
-function handleImg(input,pvId,flId){
-  const file=input.files[0]; if(!file) return;
-  document.getElementById(flId).innerHTML=`<div class="file-item">✅ ${file.name}</div>`;
-  const r=new FileReader();
-  r.onload=e=>{ const img=document.getElementById(pvId); img.src=e.target.result; img.style.display='block'; };
-  r.readAsDataURL(file); updateProgress();
-}
-function getMulti(n){ return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i=>i.value); }
-function updateProgress(){
-  let f=0,t=22;
-  for(let i=1;i<=10;i++) if(document.querySelector(`input[name="q${i}"]:checked`)) f++;
-  for(let i=11;i<=14;i++) if(getMulti('q'+i).length>0) f++;
-  ['q15','q16a','q16b','q16c','q16d','q16e','q17','q18a','q18b','q19','q20'].forEach(id=>{ if(document.getElementById(id)?.value.trim()) f++; });
-  if(document.getElementById('pv1')?.src) f++;
-  if(document.getElementById('pv2')?.src) f++;
-  document.getElementById('progressFill').style.width=(f/t*100)+'%';
-}
-document.querySelectorAll('input,textarea').forEach(el=>{ el.addEventListener('change',updateProgress); el.addEventListener('input',updateProgress); });
+  // 网络管理
+  {cat:"网络管理", q:"查看所有网络连接（99系统常用）", a:["nmcli connection show","nmcli con show"], explain:"nmcli 是凝思99系统的网络管理命令"},
+  {cat:"网络管理", q:"查看所有网卡设备状态", a:["nmcli device status","nmcli dev status"], explain:"nmcli device status 列出网卡及其状态"},
+  {cat:"网络管理", q:"查看网卡 IP、MAC 地址和状态", a:["ifconfig"], explain:"ifconfig 显示网络接口配置"},
 
-function submitExam(){
-  let score=0;
-  for(let i=1;i<=10;i++){
-    const sel=document.querySelector(`input[name="q${i}"]:checked`);
-    const ans=document.getElementById('ans'+i);
-    const opt=document.getElementById('opt'+i);
-    const correct=ANS['q'+i];
-    opt.querySelectorAll('label').forEach(l=>{ if(l.querySelector('input').value===correct) l.classList.add('correct-ans'); });
-    ans.style.display='block';
-    if(sel&&sel.value===correct){ score+=3; ans.className='answer-block correct'; ans.innerHTML='✅ 正确！答案：'+LABEL['q'+i]; }
-    else { ans.className='answer-block wrong'; ans.innerHTML='❌ '+(sel?'选错了':'未作答')+'，正确答案：'+LABEL['q'+i]; if(sel) sel.closest('label').classList.add('wrong-ans'); }
+  // 用户管理
+  {cat:"用户管理", q:"用户账号基本信息（用户名/UID/家目录等）存储在", a:["/etc/passwd"], explain:"/etc/passwd 每行一个用户，冒号分隔7个字段"},
+  {cat:"用户管理", q:"用户密码字符串和有效期存储在", a:["/etc/shadow"], explain:"/etc/shadow 是密码影子文件，权限更严格"},
+  {cat:"用户管理", q:"创建用户 testuser，指定 UID 为 1001", a:["useradd -u 1001 testuser"], explain:"useradd -u 指定 UID"},
+  {cat:"用户管理", q:"创建用户时指定宿主目录的选项", a:["-d"], hint:"useradd 的一个选项", explain:"useradd -d /home/xxx 指定宿主目录"},
+  {cat:"用户管理", q:"修改当前登录用户的密码（不指定用户名）", a:["passwd"], explain:"passwd 不加用户名时修改当前用户密码"},
+  {cat:"用户管理", q:"锁定用户账户的 usermod 选项", a:["-L","usermod -L"], hint:"一个字母选项", explain:"usermod -L 锁定，-U 解锁"},
+  {cat:"用户管理", q:"解锁用户账户的 usermod 选项", a:["-U","usermod -U"], hint:"一个字母选项", explain:"usermod -U 解锁账户"},
+  {cat:"用户管理", q:"删除用户 tom 并同时删除其宿主目录", a:["userdel -r tom"], explain:"-r 选项连宿主目录一并删除"},
+  {cat:"用户管理", q:"适用于凝思 60/80/99 系统的删除用户命令", a:["rmuser"], explain:"rmuser 是凝思专属命令，userdel 只适用42/99"},
+  {cat:"用户管理", q:"查询用户 tom 的 UID 和 GID", a:["id tom"], explain:"id 命令显示用户身份标识"},
+  {cat:"用户管理", q:"查询当前用户所属的组", a:["groups"], explain:"groups 不加参数查询当前用户的组"},
+
+  // 文件操作
+  {cat:"文件操作", q:"显示当前工作目录路径", a:["pwd"], explain:"pwd = Print Working Directory"},
+  {cat:"文件操作", q:"切换到 /etc 目录", a:["cd /etc"], explain:"cd = Change Directory"},
+  {cat:"文件操作", q:"以长格式显示当前目录所有文件（含隐藏文件）", a:["ls -la","ls -al"], explain:"-l 长格式，-a 显示隐藏文件"},
+  {cat:"文件操作", q:"统计 /var/log 目录占用空间（人类可读格式）", a:["du -ah /var/log","du -h /var/log"], explain:"du -ah 对每个文件都统计，-h 以 K/M/G 显示"},
+  {cat:"文件操作", q:"递归创建多级目录 /opt/a/b/c", a:["mkdir -p /opt/a/b/c"], explain:"-p 表示递归创建，不存在的父目录会一并创建"},
+  {cat:"文件操作", q:"创建空文件 test.txt", a:["touch test.txt"], explain:"touch 用于新建空文件或更新时间戳"},
+  {cat:"文件操作", q:"将 /etc/hosts 复制到 /tmp 并保留原文件属性", a:["cp -p /etc/hosts /tmp/"], explain:"-p 保持源文件权限、时间戳等属性"},
+  {cat:"文件操作", q:"递归复制整个 /opt/app 目录到 /backup", a:["cp -r /opt/app /backup","cp -rp /opt/app /backup"], explain:"-r 递归复制目录"},
+  {cat:"文件操作", q:"将 old.txt 重命名为 new.txt", a:["mv old.txt new.txt"], explain:"mv 源目标相同路径时相当于改名"},
+  {cat:"文件操作", q:"强制递归删除 /tmp/test 目录（不提示确认）", a:["rm -rf /tmp/test"], explain:"-r 递归，-f 强制不提示，危险命令！"},
+  {cat:"文件操作", q:"在 /var/log 下查找名为 syslog 的文件", a:["find /var/log -name syslog"], explain:"find 路径 -name 文件名"},
+  {cat:"文件操作", q:"查找大于 100MB 的文件", a:["find / -size +100M"], explain:"+100M 表示大于100M，-100M 表示小于"},
+  {cat:"文件操作", q:"显示文件全部内容", a:["cat"], hint:"一个命令名", explain:"cat 将文件内容全部输出到终端"},
+  {cat:"文件操作", q:"查看文件最后 20 行", a:["tail -n 20","tail -20"], explain:"tail -n 20 显示最后20行"},
+  {cat:"文件操作", q:"实时追踪日志文件新增内容", a:["tail -f"], hint:"tail 加一个选项", explain:"-f 是 follow 的缩写，实时跟踪文件变化"},
+  {cat:"文件操作", q:"查看文件前 10 行", a:["head","head -n 10","head -10"], explain:"head 默认显示前10行"},
+
+  // 权限管理
+  {cat:"权限管理", q:"r / w / x 对应的数字权限值分别是", a:["4 2 1","r=4 w=2 x=1"], hint:"三个数字用空格分隔", explain:"r=4, w=2, x=1，三者相加得到权限数字"},
+  {cat:"权限管理", q:"将 script.sh 权限设为 属主可读写执行、其他人只读（数字法）", a:["chmod 744 script.sh"], explain:"属主7=4+2+1，组4，其他4"},
+  {cat:"权限管理", q:"给 script.sh 的属主增加执行权限（符号法）", a:["chmod u+x script.sh"], explain:"u=属主，g=组，o=其他，a=所有"},
+  {cat:"权限管理", q:"递归修改 /opt/app 下所有文件权限为 644", a:["chmod -R 644 /opt/app"], explain:"-R 递归修改，644=属主读写+其他只读"},
+  {cat:"权限管理", q:"将 file.txt 的属主改为 alice，属组改为 dev", a:["chown alice:dev file.txt"], explain:"chown 用户:组 文件，冒号分隔"},
+  {cat:"权限管理", q:"递归修改 /var/www 目录归属为 www 用户", a:["chown -R www /var/www"], explain:"-R 递归修改目录及其所有内容"},
+
+  // vi编辑器
+  {cat:"vi编辑器", q:"vi 中删除当前行", a:["dd"], hint:"两个相同字母", explain:"dd 删除当前行，#dd 删除#行"},
+  {cat:"vi编辑器", q:"vi 中复制当前行", a:["yy"], hint:"两个相同字母", explain:"yy 复制当前行，p 粘贴"},
+  {cat:"vi编辑器", q:"vi 中撤销上一步操作", a:["u"], hint:"一个字母", explain:"u = undo，撤销；Ctrl+r 重做"},
+  {cat:"vi编辑器", q:"vi 中保存文件并退出", a:[":wq",":wq!"], hint:"末行模式命令", explain:":w 保存，:q 退出，:wq 一起"},
+  {cat:"vi编辑器", q:"vi 中强制退出不保存", a:[":q!"], hint:"末行模式命令带感叹号", explain:":q! 放弃修改强制退出"},
+  {cat:"vi编辑器", q:"vi 中从上而下搜索字符串 'error'", a:["/error"], hint:"/ 开头", explain:"/word 向下搜，?word 向上搜，n 下一个"},
+  {cat:"vi编辑器", q:"vi 中从命令模式在当前行后插入（光标后）", a:["a"], hint:"单个字母", explain:"a=光标后插入，i=光标前，o=下方新行"},
+  {cat:"vi编辑器", q:"vi 中删除光标处到行尾的所有字符", a:["d$"], hint:"d+符号", explain:"d$ 删到行尾，d^ 删到行首"},
+
+  // 定时任务
+  {cat:"定时任务", q:"查看当前用户的定时任务列表", a:["crontab -l"], explain:"crontab -l list，-e 编辑，-r 删除所有"},
+  {cat:"定时任务", q:"编辑当前用户的定时任务", a:["crontab -e"], explain:"crontab -e 打开编辑器修改任务"},
+  {cat:"定时任务", q:"删除当前用户的所有定时任务", a:["crontab -r"], explain:"crontab -r remove，谨慎使用"},
+  {cat:"定时任务", q:"crontab 格式中，5个字段依次代表什么（用/分隔）", a:["分/时/日/月/周","分钟/小时/日/月/周"], hint:"5个字段，用/分隔", explain:"分(0-59) 时(0-23) 日(1-31) 月(1-12) 周(1-7)"},
+  {cat:"定时任务", q:"每天凌晨2点执行 /backup.sh 的 crontab 写法", a:["0 2 * * * /backup.sh"], explain:"分=0 时=2 日月周都是* 表示每天"},
+  {cat:"定时任务", q:"每小时的第15分钟执行 /check.sh", a:["15 * * * * /check.sh"], explain:"分=15，其余*表示每小时都执行"},
+
+  // 日志路径
+  {cat:"日志路径", q:"系统主日志文件路径（凝思系统）", a:["/var/log/syslog","/var/log/messages"], explain:"不同发行版可能用 syslog 或 messages"},
+  {cat:"日志路径", q:"内核和驱动相关日志路径", a:["/var/log/kern.log"], explain:"kern.log 记录内核活动和硬件问题"},
+  {cat:"日志路径", q:"系统审计日志（记录用户操作）路径", a:["/var/log/audit.log"], explain:"audit.log 用于安全审计和合规检查"},
+  {cat:"日志路径", q:"凝思系统日志统一存放在哪个目录", a:["/var/log/"], explain:"/var/log/ 是 Linux 标准日志目录"},
+];
+
+// ============================================================
+// 运行时状态
+// ============================================================
+let queue = [], cur = 0, correct = 0, wrong = 0, wrongItems = [];
+let answered = false, curCat = 'all';
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function buildQueue(){
+  const items = curCat === 'all' ? BANK : BANK.filter(x=>x.cat===curCat);
+  queue = shuffle([...items]);
+  cur = 0; correct = 0; wrong = 0; wrongItems = [];
+  answered = false;
+}
+
+function updateStats(){
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sWrong').textContent = wrong;
+  document.getElementById('sLeft').textContent = Math.max(0, queue.length - cur);
+  const pct = queue.length ? (cur / queue.length * 100) : 0;
+  document.getElementById('progBar').style.width = pct + '%';
+}
+
+function showQ(){
+  if(cur >= queue.length){ showEnd(); return; }
+  const item = queue[cur];
+  answered = false;
+  document.getElementById('catBadge').textContent = item.cat;
+  document.getElementById('prompt').textContent = item.q;
+  document.getElementById('hintText').textContent = item.hint ? '提示：' + item.hint : '';
+  const inp = document.getElementById('cmdInput');
+  inp.value = ''; inp.className = 'cmd-input'; inp.disabled = false; inp.focus();
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.style.display = 'none';
+  document.getElementById('btnCheck').style.display = '';
+  document.getElementById('btnSkip').style.display = '';
+  document.getElementById('btnNext').style.display = 'none';
+  updateStats();
+}
+
+function normalize(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
+
+function checkAnswer(){
+  if(answered) return nextQ();
+  const item = queue[cur];
+  const val = document.getElementById('cmdInput').value;
+  const n = normalize(val);
+  const ok = item.a.some(a => normalize(a) === n);
+  const inp = document.getElementById('cmdInput');
+  const fb = document.getElementById('feedback');
+  answered = true;
+  inp.disabled = true;
+  fb.style.display = 'block';
+  if(ok){
+    correct++;
+    inp.className = 'cmd-input correct';
+    fb.className = 'feedback show ok';
+    document.getElementById('feedbackMsg').textContent = '✅ 正确！';
+    document.getElementById('correctAnswer').textContent = '';
+    document.getElementById('explainText').textContent = item.explain || '';
+  } else {
+    wrong++;
+    wrongItems.push(item);
+    inp.className = 'cmd-input wrong';
+    fb.className = 'feedback show bad';
+    document.getElementById('feedbackMsg').textContent = '❌ ' + (val.trim() ? '答错了' : '未作答');
+    document.getElementById('correctAnswer').textContent = '正确答案：' + item.a[0];
+    document.getElementById('explainText').textContent = item.explain || '';
   }
-  for(let i=11;i<=14;i++){
-    const sel=getMulti('q'+i).sort().join('');
-    const correct=ANS['q'+i].slice().sort().join('');
-    const ans=document.getElementById('ans'+i);
-    const opt=document.getElementById('opt'+i);
-    ANS['q'+i].forEach(v=>opt.querySelector(`input[value="${v}"]`)?.closest('label')?.classList.add('correct-ans'));
-    ans.style.display='block';
-    if(sel===correct){ score+=5; ans.className='answer-block correct'; ans.innerHTML='✅ 正确！答案：'+LABEL['q'+i]; }
-    else { ans.className='answer-block wrong'; ans.innerHTML='❌ 正确答案：'+LABEL['q'+i]; }
-  }
-  ['key15','key16','key17','key18','key19','key20','key21'].forEach(id=>document.getElementById(id).style.display='block');
-  const b=document.getElementById('scoreBoard');
-  b.style.display='block';
-  document.getElementById('scoreTxt').textContent=score+' / 50';
-  document.getElementById('scoreDesc').textContent='客观题得分（单选30+多选20），主观题对照答案自评';
-  b.scrollIntoView({behavior:'smooth'});
-  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el=>el.disabled=true);
+  document.getElementById('btnCheck').style.display = 'none';
+  document.getElementById('btnSkip').style.display = 'none';
+  document.getElementById('btnNext').style.display = '';
+  updateStats();
 }
 
-function downloadAnswers(){
-  const name=document.getElementById('name').value||'匿名';
-  const dept=document.getElementById('dept').value||'未填写';
-  const date=document.getElementById('date').value||new Date().toISOString().slice(0,10);
-  let txt=`凝思操作系统培训考核答卷\n姓名：${name}  部门：${dept}  日期：${date}\n${'='.repeat(40)}\n\n【单选题】\n`;
-  for(let i=1;i<=10;i++){ const el=document.querySelector(`input[name="q${i}"]:checked`); txt+=`第${i}题：${el?el.value:'未答'}\n`; }
-  txt+='\n【多选题】\n';
-  for(let i=11;i<=14;i++) txt+=`第${i}题：${getMulti('q'+i).join('')||'未答'}\n`;
-  txt+='\n【填空题】\n';
-  ['q15','q16a','q16b','q16c','q16d','q16e','q17','q18a','q18b'].forEach(id=>txt+=`${id}：${document.getElementById(id)?.value||'未填'}\n`);
-  txt+=`\n【简答题】\n第19题：\n${document.getElementById('q19').value}\n\n第20题：\n${document.getElementById('q20').value}\n`;
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
-  a.download=`凝思答卷_${name}_${date}.txt`; a.click();
+function skipQ(){
+  wrong++;
+  wrongItems.push(queue[cur]);
+  cur++;
+  updateStats();
+  showQ();
 }
 
-function clearForm(){
-  if(!confirm('确定清空？')) return;
-  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el=>{ el.disabled=false; el.checked=false; });
-  document.querySelectorAll('input[type=text],input[type=date],textarea').forEach(el=>el.value='');
-  document.querySelectorAll('.answer-block,.answer-key').forEach(el=>el.style.display='none');
-  document.querySelectorAll('.correct-ans,.wrong-ans').forEach(el=>el.classList.remove('correct-ans','wrong-ans'));
-  document.getElementById('scoreBoard').style.display='none';
-  ['pv1','pv2'].forEach(id=>{ const el=document.getElementById(id); if(el){el.src='';el.style.display='none';} });
-  ['fl1','fl2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
-  updateProgress();
+function nextQ(){
+  cur++;
+  showQ();
 }
-document.getElementById('date').value=new Date().toISOString().slice(0,10);
-updateProgress();
+
+function showEnd(){
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('endView').style.display = 'block';
+  const total = correct + wrong;
+  const rate = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('eCorrect').textContent = correct;
+  document.getElementById('eWrong').textContent = wrong;
+  document.getElementById('eRate').textContent = rate + '%';
+  document.getElementById('endEmoji').textContent = rate >= 90 ? '🔥' : rate >= 70 ? '💪' : '📖';
+  document.getElementById('endTitle').textContent = rate >= 90 ? '牛！命令已刻入肌肉记忆' : rate >= 70 ? '不错，继续巩固' : '加油，多练几遍！';
+  const rl = document.getElementById('reviewList');
+  rl.innerHTML = wrongItems.length === 0 ? '<p style="color:#4caf50;text-align:center">全部答对，无错题！</p>' :
+    wrongItems.map(x=>`<div class="review-item"><div class="review-q">${x.q}</div><div class="review-a">${x.a[0]}</div></div>`).join('');
+}
+
+function restart(){
+  document.getElementById('mainView').style.display = '';
+  document.getElementById('endView').style.display = 'none';
+  buildQueue(); showQ();
+}
+
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  curCat = btn.dataset.cat;
+  restart();
+}
+
+// 键盘快捷键
+document.getElementById('cmdInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); answered ? nextQ() : checkAnswer(); }
+  if(e.key === 'Escape'){ e.preventDefault(); skipQ(); }
+});
+
+// 启动
+buildQueue(); showQ();
 </script>
 </body>
 </html>

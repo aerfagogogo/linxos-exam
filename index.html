@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凝思安全操作系统培训考核试卷</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6fa; color: #2c3e50; line-height: 1.7; }
+  .cover { background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%); color: white; padding: 48px 32px; text-align: center; }
+  .cover h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .cover p { opacity: .85; font-size: 14px; }
+  .info-bar { background: white; padding: 20px 32px; display: flex; gap: 24px; flex-wrap: wrap; border-bottom: 1px solid #e0e0e0; }
+  .info-bar label { font-size: 14px; color: #666; }
+  .info-bar input { border: none; border-bottom: 1.5px solid #90caf9; padding: 2px 6px; font-size: 15px; width: 140px; outline: none; background: transparent; }
+  .info-bar input:focus { border-bottom-color: #1565c0; }
+  .container { max-width: 860px; margin: 28px auto; padding: 0 16px 60px; }
+  .section { background: white; border-radius: 10px; padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .section-title { font-size: 18px; font-weight: 700; color: #1565c0; border-left: 4px solid #1565c0; padding-left: 12px; margin-bottom: 22px; }
+  .question { margin-bottom: 26px; }
+  .question-label { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #1a237e; }
+  .question-text { font-size: 14.5px; margin-bottom: 10px; }
+  .options label { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-bottom: 4px; transition: background .15s; }
+  .options label:hover { background: #e3f2fd; }
+  .options input[type=radio], .options input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: #1565c0; }
+  .fill-input { width: 100%; border: 1.5px solid #bbdefb; border-radius: 6px; padding: 8px 12px; font-size: 14px; outline: none; resize: vertical; min-height: 38px; font-family: inherit; transition: border-color .15s; }
+  .fill-input:focus { border-color: #1565c0; }
+  textarea.fill-input { min-height: 90px; }
+  .code-block { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; font-family: "SF Mono", "Consolas", monospace; font-size: 13px; color: #37474f; margin: 8px 0; white-space: pre-wrap; }
+  .upload-area { border: 2px dashed #90caf9; border-radius: 8px; padding: 18px; text-align: center; color: #64b5f6; cursor: pointer; transition: all .2s; margin-top: 8px; }
+  .upload-area:hover { border-color: #1565c0; background: #e3f2fd; }
+  .upload-area input[type=file] { display: none; }
+  .upload-icon { font-size: 28px; margin-bottom: 6px; }
+  .file-list { margin-top: 10px; font-size: 13px; color: #2e7d32; text-align: left; }
+  .file-item { background: #e8f5e9; padding: 5px 10px; border-radius: 4px; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+  .score-hint { font-size: 12px; color: #999; margin-left: 8px; font-weight: 400; }
+  .submit-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e0e0; padding: 14px 32px; display: flex; justify-content: center; gap: 16px; z-index: 100; box-shadow: 0 -2px 8px rgba(0,0,0,.08); }
+  .btn { padding: 10px 32px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .btn-primary { background: #1565c0; color: white; }
+  .btn-primary:hover { background: #0d47a1; }
+  .btn-secondary { background: #f5f5f5; color: #555; border: 1px solid #ddd; }
+  .btn-secondary:hover { background: #e0e0e0; }
+  .progress-bar { height: 4px; background: #e3f2fd; }
+  .progress-fill { height: 100%; background: #1565c0; transition: width .3s; width: 0%; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; justify-content: center; align-items: center; }
+  .modal.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; padding: 32px; max-width: 480px; width: 90%; text-align: center; }
+  .modal-box h3 { font-size: 20px; margin-bottom: 12px; color: #1565c0; }
+  .modal-box p { color: #555; font-size: 14px; margin-bottom: 20px; }
+  .tag { display: inline-block; background: #e3f2fd; color: #1565c0; font-size: 11px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
+  .notice { background: #fff8e1; border-left: 4px solid #f9a825; padding: 10px 16px; border-radius: 4px; font-size: 13px; color: #5d4037; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>凝思安全操作系统培训考核</h1>
+  <p>北京凝思软件 · V6.0.99 系统 · 基础命令与日常操作</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="info-bar">
+  <div><label>姓名：<input type="text" id="name" placeholder="请输入姓名"></label></div>
+  <div><label>部门：<input type="text" id="dept" placeholder="请输入部门"></label></div>
+  <div><label>日期：<input type="date" id="date"></label></div>
+</div>
+
+<div class="container">
+
+<!-- 第一部分：单选题 -->
+<div class="section">
+  <div class="section-title">第一部分 · 单选题 <span class="score-hint">（每题3分，共30分）</span></div>
+  <div class="notice">每题只有一个正确答案，请选择最符合的选项。</div>
+
+  <div class="question" id="q1">
+    <div class="question-label">1. 凝思安全操作系统由哪家公司自主研发？</div>
+    <div class="options">
+      <label><input type="radio" name="q1" value="A"> A. 华为技术有限公司</label>
+      <label><input type="radio" name="q1" value="B"> B. 北京凝思软件股份有限公司</label>
+      <label><input type="radio" name="q1" value="C"> C. 中科方德软件有限公司</label>
+      <label><input type="radio" name="q1" value="D"> D. 麒麟软件有限公司</label>
+    </div>
+  </div>
+
+  <div class="question" id="q2">
+    <div class="question-label">2. 凝思安全操作系统 V6.0.99 支持的硬件架构是？</div>
+    <div class="options">
+      <label><input type="radio" name="q2" value="A"> A. 仅 x86_64</label>
+      <label><input type="radio" name="q2" value="B"> B. 仅 ARM64</label>
+      <label><input type="radio" name="q2" value="C"> C. x86_64 和 ARM64</label>
+      <label><input type="radio" name="q2" value="D"> D. MIPS 和 RISC-V</label>
+    </div>
+  </div>
+
+  <div class="question" id="q3">
+    <div class="question-label">3. Linux 命令格式中，以 <code>--</code> 开头的选项是？</div>
+    <div class="options">
+      <label><input type="radio" name="q3" value="A"> A. 短格式选项（单字符）</label>
+      <label><input type="radio" name="q3" value="B"> B. 长格式选项（多字符）</label>
+      <label><input type="radio" name="q3" value="C"> C. 命令参数</label>
+      <label><input type="radio" name="q3" value="D"> D. 环境变量</label>
+    </div>
+  </div>
+
+  <div class="question" id="q4">
+    <div class="question-label">4. 以下哪个命令可以<strong>实时追踪</strong>日志文件的新增内容？</div>
+    <div class="options">
+      <label><input type="radio" name="q4" value="A"> A. <code>cat /var/log/syslog</code></label>
+      <label><input type="radio" name="q4" value="B"> B. <code>head -n 20 /var/log/syslog</code></label>
+      <label><input type="radio" name="q4" value="C"> C. <code>tail -f /var/log/syslog</code></label>
+      <label><input type="radio" name="q4" value="D"> D. <code>less /var/log/syslog</code></label>
+    </div>
+  </div>
+
+  <div class="question" id="q5">
+    <div class="question-label">5. 用户密码字符串和有效期信息存储在哪个文件？</div>
+    <div class="options">
+      <label><input type="radio" name="q5" value="A"> A. <code>/etc/passwd</code></label>
+      <label><input type="radio" name="q5" value="B"> B. <code>/etc/group</code></label>
+      <label><input type="radio" name="q5" value="C"> C. <code>/etc/shadow</code></label>
+      <label><input type="radio" name="q5" value="D"> D. <code>/etc/sudoers</code></label>
+    </div>
+  </div>
+
+  <div class="question" id="q6">
+    <div class="question-label">6. <code>crontab</code> 配置中 <code>5 * * * * /script.sh</code> 的含义是？</div>
+    <div class="options">
+      <label><input type="radio" name="q6" value="A"> A. 每天第5小时执行</label>
+      <label><input type="radio" name="q6" value="B"> B. 每小时的第5分钟执行</label>
+      <label><input type="radio" name="q6" value="C"> C. 每月第5天执行</label>
+      <label><input type="radio" name="q6" value="D"> D. 每周第5天执行</label>
+    </div>
+  </div>
+
+  <div class="question" id="q7">
+    <div class="question-label">7. vi 编辑器中，从命令模式进入输入模式应按？</div>
+    <div class="options">
+      <label><input type="radio" name="q7" value="A"> A. <code>Esc</code></label>
+      <label><input type="radio" name="q7" value="B"> B. <code>:</code></label>
+      <label><input type="radio" name="q7" value="C"> C. <code>a</code> / <code>i</code> / <code>o</code></label>
+      <label><input type="radio" name="q7" value="D"> D. <code>q!</code></label>
+    </div>
+  </div>
+
+  <div class="question" id="q8">
+    <div class="question-label">8. 以下关于 <code>rm -rf</code> 命令的描述，正确的是？</div>
+    <div class="options">
+      <label><input type="radio" name="q8" value="A"> A. 只删除空目录</label>
+      <label><input type="radio" name="q8" value="B"> B. 强制递归删除目录及其所有内容，且不提示确认</label>
+      <label><input type="radio" name="q8" value="C"> C. 移动文件到回收站</label>
+      <label><input type="radio" name="q8" value="D"> D. 仅删除普通文件，不影响目录</label>
+    </div>
+  </div>
+
+  <div class="question" id="q9">
+    <div class="question-label">9. 凝思99系统中，推荐使用哪个命令进行网络配置管理？</div>
+    <div class="options">
+      <label><input type="radio" name="q9" value="A"> A. <code>ifconfig</code></label>
+      <label><input type="radio" name="q9" value="B"> B. <code>nmcli</code></label>
+      <label><input type="radio" name="q9" value="C"> C. <code>netstat</code></label>
+      <label><input type="radio" name="q9" value="D"> D. <code>route</code></label>
+    </div>
+  </div>
+
+  <div class="question" id="q10">
+    <div class="question-label">10. 系统审计日志（记录用户操作和系统活动）存放在？</div>
+    <div class="options">
+      <label><input type="radio" name="q10" value="A"> A. <code>/var/log/syslog</code></label>
+      <label><input type="radio" name="q10" value="B"> B. <code>/var/log/kern.log</code></label>
+      <label><input type="radio" name="q10" value="C"> C. <code>/var/log/audit.log</code></label>
+      <label><input type="radio" name="q10" value="D"> D. <code>/var/log/boot.log</code></label>
+    </div>
+  </div>
+</div>
+
+<!-- 第二部分：多选题 -->
+<div class="section">
+  <div class="section-title">第二部分 · 多选题 <span class="score-hint">（每题5分，共20分，全选对得分）</span></div>
+  <div class="notice">每题有2个或以上正确答案，请选择所有正确选项。</div>
+
+  <div class="question" id="q11">
+    <div class="question-label">11. 以下哪些命令可以使系统<strong>立即关机</strong>？<span class="tag">多选</span></div>
+    <div class="options">
+      <label><input type="checkbox" name="q11" value="A"> A. <code>shutdown -h now</code></label>
+      <label><input type="checkbox" name="q11" value="B"> B. <code>poweroff</code></label>
+      <label><input type="checkbox" name="q11" value="C"> C. <code>init 0</code></label>
+      <label><input type="checkbox" name="q11" value="D"> D. <code>reboot</code></label>
+      <label><input type="checkbox" name="q11" value="E"> E. <code>halt</code></label>
+    </div>
+  </div>
+
+  <div class="question" id="q12">
+    <div class="question-label">12. <code>useradd</code> 命令中以下哪些选项含义正确？<span class="tag">多选</span></div>
+    <div class="options">
+      <label><input type="checkbox" name="q12" value="A"> A. <code>-u</code>：指定 UID</label>
+      <label><input type="checkbox" name="q12" value="B"> B. <code>-d</code>：指定宿主目录</label>
+      <label><input type="checkbox" name="q12" value="C"> C. <code>-e</code>：指定账号失效时间</label>
+      <label><input type="checkbox" name="q12" value="D"> D. <code>-g</code>：指定基本组</label>
+      <label><input type="checkbox" name="q12" value="E"> E. <code>-r</code>：连宿主目录一并删除</label>
+    </div>
+  </div>
+
+  <div class="question" id="q13">
+    <div class="question-label">13. vi 编辑器命令模式下，以下操作描述正确的是？<span class="tag">多选</span></div>
+    <div class="options">
+      <label><input type="checkbox" name="q13" value="A"> A. <code>dd</code>：删除当前行</label>
+      <label><input type="checkbox" name="q13" value="B"> B. <code>yy</code>：复制当前行</label>
+      <label><input type="checkbox" name="q13" value="C"> C. <code>u</code>：撤销上一步操作</label>
+      <label><input type="checkbox" name="q13" value="D"> D. <code>/word</code>：从上而下查找字符串</label>
+      <label><input type="checkbox" name="q13" value="E"> E. <code>:q!</code>：保存并退出</label>
+    </div>
+  </div>
+
+  <div class="question" id="q14">
+    <div class="question-label">14. 关于 <code>chmod</code> 命令，以下说法正确的是？<span class="tag">多选</span></div>
+    <div class="options">
+      <label><input type="checkbox" name="q14" value="A"> A. <code>chmod 755 file</code> 数字法设置权限</label>
+      <label><input type="checkbox" name="q14" value="B"> B. <code>chmod u+x file</code> 为属主增加执行权限</label>
+      <label><input type="checkbox" name="q14" value="C"> C. <code>r=4, w=2, x=1</code></label>
+      <label><input type="checkbox" name="q14" value="D"> D. <code>chmod -R 644 dir</code> 递归修改目录下所有文件</label>
+      <label><input type="checkbox" name="q14" value="E"> E. <code>chmod</code> 可以修改文件归属用户</label>
+    </div>
+  </div>
+</div>
+
+<!-- 第三部分：填空题 -->
+<div class="section">
+  <div class="section-title">第三部分 · 填空题 <span class="score-hint">（每空2分，共20分）</span></div>
+
+  <div class="question">
+    <div class="question-label">15. 查看系统版本信息的文件路径是：</div>
+    <input type="text" class="fill-input" id="q15" placeholder="请填写完整路径">
+  </div>
+
+  <div class="question">
+    <div class="question-label">16. 补全 crontab 格式说明（从左到右五个 <code>*</code> 依次代表）：</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+      <input type="text" class="fill-input" id="q16a" placeholder="第1个*" style="width:120px">
+      <input type="text" class="fill-input" id="q16b" placeholder="第2个*" style="width:120px">
+      <input type="text" class="fill-input" id="q16c" placeholder="第3个*" style="width:120px">
+      <input type="text" class="fill-input" id="q16d" placeholder="第4个*" style="width:120px">
+      <input type="text" class="fill-input" id="q16e" placeholder="第5个*" style="width:120px">
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="question-label">17. 修改文件 <code>test.sh</code> 权限为属主可读写执行、组和其他人只读，数字法命令为：</div>
+    <input type="text" class="fill-input" id="q17" placeholder="chmod _____ test.sh">
+  </div>
+
+  <div class="question">
+    <div class="question-label">18. <code>usermod -L 用户名</code> 的作用是 ___；<code>-U</code> 的作用是 ___：</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+      <input type="text" class="fill-input" id="q18a" placeholder="-L 的作用" style="width:48%">
+      <input type="text" class="fill-input" id="q18b" placeholder="-U 的作用" style="width:48%">
+    </div>
+  </div>
+</div>
+
+<!-- 第四部分：简答题 -->
+<div class="section">
+  <div class="section-title">第四部分 · 简答题 <span class="score-hint">（每题10分，共20分）</span></div>
+
+  <div class="question">
+    <div class="question-label">19. 简述 vi 编辑器的三种工作模式，以及各模式之间的切换方式。</div>
+    <textarea class="fill-input" id="q19" placeholder="请在此作答..."></textarea>
+  </div>
+
+  <div class="question">
+    <div class="question-label">20. 描述凝思系统中故障排查的核心方法论（至少说明4条原则），并以"服务无法启动"为例写出排查步骤和对应命令。</div>
+    <textarea class="fill-input" id="q20" placeholder="请在此作答..."></textarea>
+  </div>
+</div>
+
+<!-- 第五部分：实操题 -->
+<div class="section">
+  <div class="section-title">第五部分 · 实操题 <span class="score-hint">（10分）</span></div>
+  <div class="notice">
+    请在凝思系统终端中完成以下操作，完成后上传操作历史记录（history 命令输出保存为 txt）和要求创建的文件。
+  </div>
+
+  <div class="question">
+    <div class="question-label">21. 按顺序完成以下操作：</div>
+    <div class="code-block">1. 在 /tmp 目录下创建名为 exam_你的姓名 的目录
+2. 在该目录中创建文件 hello.txt，内容写入"Hello LinxOS"
+3. 将 hello.txt 的权限修改为 644（属主读写，组和其他人只读）
+4. 使用 cat 命令查看文件内容
+5. 创建定时任务：每天 23:00 将 /var/log/syslog 复制备份到 /tmp/syslog_backup
+6. 用 crontab -l 命令查看定时任务列表</div>
+
+    <div style="margin-top: 16px;">
+      <p style="font-size:14px; margin-bottom:8px; font-weight:600;">📎 上传操作历史记录（history 输出 txt）：</p>
+      <div class="upload-area" onclick="document.getElementById('upload-history').click()">
+        <div class="upload-icon">📄</div>
+        <div>点击上传 history.txt</div>
+        <div style="font-size:12px; margin-top:4px;">获取方式：<code>history > ~/history.txt</code></div>
+        <input type="file" id="upload-history" accept=".txt,.log" onchange="handleFile(this,'history-list')">
+      </div>
+      <div id="history-list" class="file-list"></div>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <p style="font-size:14px; margin-bottom:8px; font-weight:600;">📎 上传创建的 hello.txt 文件：</p>
+      <div class="upload-area" onclick="document.getElementById('upload-hello').click()">
+        <div class="upload-icon">📝</div>
+        <div>点击上传 hello.txt</div>
+        <input type="file" id="upload-hello" accept=".txt" onchange="handleFile(this,'hello-list')">
+      </div>
+      <div id="hello-list" class="file-list"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="submit-bar">
+  <button class="btn btn-secondary" onclick="clearForm()">清空重填</button>
+  <button class="btn btn-primary" onclick="submitExam()">提交并下载答卷</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3>✅ 答卷已生成</h3>
+    <p id="modal-msg">请将下载的文件连同实操附件一并发送给阅卷老师。</p>
+    <button class="btn btn-primary" onclick="document.getElementById('modal').classList.remove('show')">确定</button>
+  </div>
+</div>
+
+<script>
+// 答案标准（用于进度计算，不在前端评分）
+const answers = {
+  q1:'B', q2:'C', q3:'B', q4:'C', q5:'C',
+  q6:'B', q7:'C', q8:'B', q9:'B', q10:'C',
+  q11:['A','B','C','E'], q12:['A','B','C','D'],
+  q13:['A','B','C','D'], q14:['A','B','C','D']
+};
+
+// 文件缓存（Base64 存入答卷）
+const fileCache = {};
+
+function handleFile(input, listId) {
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+  for (const file of input.files) {
+    const div = document.createElement('div');
+    div.className = 'file-item';
+    div.innerHTML = `✅ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+    list.appendChild(div);
+    // 读取文件内容
+    const reader = new FileReader();
+    reader.onload = e => { fileCache[input.id] = { name: file.name, content: e.target.result }; };
+    reader.readAsText(file, 'utf-8');
+  }
+  updateProgress();
+}
+
+function getMulti(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
+}
+
+function updateProgress() {
+  let filled = 0, total = 25;
+  // 单选
+  for (let i=1;i<=10;i++) if (document.querySelector(`input[name="q${i}"]:checked`)) filled++;
+  // 多选
+  for (let i=11;i<=14;i++) if (getMulti(`q${i}`).length > 0) filled++;
+  // 填空
+  ['q15','q16a','q16b','q16c','q16d','q16e','q17','q18a','q18b'].forEach(id => {
+    if (document.getElementById(id)?.value.trim()) filled++;
+  });
+  // 简答
+  if (document.getElementById('q19')?.value.trim()) filled++;
+  if (document.getElementById('q20')?.value.trim()) filled++;
+  // 文件
+  if (fileCache['upload-history']) filled++;
+  if (fileCache['upload-hello']) filled++;
+  document.getElementById('progressFill').style.width = (filled/total*100) + '%';
+}
+
+// 监听所有输入变化
+document.querySelectorAll('input,textarea').forEach(el => {
+  el.addEventListener('change', updateProgress);
+  el.addEventListener('input', updateProgress);
+});
+
+function submitExam() {
+  const name = document.getElementById('name').value.trim() || '匿名';
+  const dept = document.getElementById('dept').value.trim() || '未填写';
+  const date = document.getElementById('date').value || new Date().toISOString().slice(0,10);
+
+  const result = {
+    基本信息: { 姓名: name, 部门: dept, 日期: date },
+    单选题: {},
+    多选题: {},
+    填空题: {},
+    简答题: {},
+    实操文件: {}
+  };
+
+  for (let i=1;i<=10;i++) {
+    const el = document.querySelector(`input[name="q${i}"]:checked`);
+    result.单选题[`第${i}题`] = el ? el.value : '未作答';
+  }
+  for (let i=11;i<=14;i++) {
+    result.多选题[`第${i}题`] = getMulti(`q${i}`).join('') || '未作答';
+  }
+  result.填空题 = {
+    '第15题_系统版本文件路径': document.getElementById('q15').value,
+    '第16题_crontab_第1位': document.getElementById('q16a').value,
+    '第16题_crontab_第2位': document.getElementById('q16b').value,
+    '第16题_crontab_第3位': document.getElementById('q16c').value,
+    '第16题_crontab_第4位': document.getElementById('q16d').value,
+    '第16题_crontab_第5位': document.getElementById('q16e').value,
+    '第17题_chmod命令': document.getElementById('q17').value,
+    '第18题_-L作用': document.getElementById('q18a').value,
+    '第18题_-U作用': document.getElementById('q18b').value,
+  };
+  result.简答题 = {
+    '第19题_vi三种模式': document.getElementById('q19').value,
+    '第20题_故障排查': document.getElementById('q20').value,
+  };
+  if (fileCache['upload-history']) result.实操文件['history.txt内容'] = fileCache['upload-history'].content;
+  if (fileCache['upload-hello']) result.实操文件['hello.txt内容'] = fileCache['upload-hello'].content;
+
+  // 生成可读答卷文本
+  let txt = `=====================================\n凝思操作系统培训考核答卷\n=====================================\n`;
+  txt += `姓名：${name}　部门：${dept}　日期：${date}\n\n`;
+  txt += `【单选题】\n`;
+  for (const [k,v] of Object.entries(result.单选题)) txt += `${k}：${v}\n`;
+  txt += `\n【多选题】\n`;
+  for (const [k,v] of Object.entries(result.多选题)) txt += `${k}：${v}\n`;
+  txt += `\n【填空题】\n`;
+  for (const [k,v] of Object.entries(result.填空题)) txt += `${k}：${v || '未填写'}\n`;
+  txt += `\n【简答题】\n`;
+  for (const [k,v] of Object.entries(result.简答题)) txt += `${k}：\n${v || '未作答'}\n\n`;
+  if (result.实操文件['history.txt内容']) {
+    txt += `\n【实操-history.txt内容】\n${result.实操文件['history.txt内容']}\n`;
+  }
+  if (result.实操文件['hello.txt内容']) {
+    txt += `\n【实操-hello.txt内容】\n${result.实操文件['hello.txt内容']}\n`;
+  }
+
+  // 下载
+  const blob = new Blob([txt], {type: 'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `凝思培训答卷_${name}_${date}.txt`;
+  a.click();
+
+  document.getElementById('modal-msg').textContent = `答卷已保存为：凝思培训答卷_${name}_${date}.txt，请将此文件发送给阅卷老师。`;
+  document.getElementById('modal').classList.add('show');
+}
+
+function clearForm() {
+  if (!confirm('确定要清空所有答案吗？')) return;
+  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el => el.checked = false);
+  document.querySelectorAll('input[type=text],input[type=date],textarea').forEach(el => el.value = '');
+  document.getElementById('history-list').innerHTML = '';
+  document.getElementById('hello-list').innerHTML = '';
+  Object.keys(fileCache).forEach(k => delete fileCache[k]);
+  updateProgress();
+}
+
+// 初始化日期
+document.getElementById('date').value = new Date().toISOString().slice(0,10);
+updateProgress();
+</script>
+</body>
+</html>

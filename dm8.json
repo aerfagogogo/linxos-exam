@@ -1,0 +1,1546 @@
+[
+  {
+    "cat": "概念",
+    "q": "事务的 ACID 四个特性各代表什么?",
+    "a": [
+      "A 原子性 Atomicity 要么全做要么全不做",
+      "C 一致性 Consistent 事务结束时所有数据正确",
+      "I 隔离性 Isolation 并发事务互不干涉",
+      "D 持久性 Durability 提交后永久不可回滚"
+    ],
+    "hint": "原子-一致-隔离-持久",
+    "explain": "ACID = Atomicity 原子 / Consistent 一致 / Isolation 隔离 / Durability 持久。考试必考的口诀题。提交后即持久,不能再回滚",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "阿姨爱我的爹"
+  },
+  {
+    "cat": "概念",
+    "q": "SQL 四大分类(DDL/DQL/DML/DCL)各管什么?",
+    "a": [
+      "DDL 定义对象 CREATE/ALTER/DROP/TRUNCATE",
+      "DQL 查询 SELECT",
+      "DML 操作记录 INSERT/UPDATE/DELETE",
+      "DCL 权限/安全 GRANT/REVOKE"
+    ],
+    "hint": "D 后面四个字母",
+    "explain": "DDL=Definition 定义,DQL=Query 查询,DML=Manipulation 操作,DCL=Control 控制权限。一定别把 TRUNCATE 划到 DML——它是 DDL!",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "定义/查询/操作/控制"
+  },
+  {
+    "cat": "概念",
+    "q": "判断:数据库的 TRUNCATE TABLE 可以回滚",
+    "a": [
+      "错",
+      "TRUNCATE 不可回滚,DELETE 才可以",
+      "TRUNCATE 是 DDL,无日志,超快;DELETE 是 DML,记日志,可 rollback"
+    ],
+    "hint": "TRUNCATE 是 DDL 还是 DML?",
+    "explain": "TRUNCATE TABLE 是 DDL 操作,不写日志,执行后数据立即清空且**不可回滚**;DELETE 是 DML,有日志可回滚。删整表用 TRUNCATE 性能远超 DELETE,但不能反悔",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "TRUNCATE=DDL=不可回滚"
+  },
+  {
+    "cat": "概念",
+    "q": "DM8 数据库由哪两部分构成?",
+    "a": [
+      "数据库(磁盘上数据集合)",
+      "实例(运行的进程/线程+共享内存)"
+    ],
+    "hint": "磁盘上 vs 运行中",
+    "explain": "DM8 数据库 = 静态部分(磁盘文件:数据/控制/日志/配置) + 动态部分(实例:dmserver 进程+各种线程+共享内存)。这是 Oracle/DM 体系的标准定义",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "数据库=磁盘+实例"
+  },
+  {
+    "cat": "概念",
+    "q": "DM8 的 6 个常用表空间名称是什么?",
+    "a": [
+      "SYSTEM 系统表空间",
+      "ROLL 回滚表空间(UNDO)",
+      "TEMP 临时表空间",
+      "MAIN 主用户表空间",
+      "HMAIN HUGE列存专用",
+      "自定义业务表空间"
+    ],
+    "hint": "ROLL/TEMP/MAIN...",
+    "explain": "6 个核心表空间:SYSTEM(数据字典) / ROLL(UNDO日志,回滚用) / TEMP(排序/HASH中间结果) / MAIN(默认主用户,业务表千万别建在这!) / HMAIN(列存) / 自定义。考试常考",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "系统/回滚/临时/主/列存/自定义"
+  },
+  {
+    "cat": "概念",
+    "q": "DM 表空间-段-簇-页的逻辑层次关系",
+    "a": [
+      "表空间→数据文件 / 段",
+      "段→簇",
+      "簇→页",
+      "页→磁盘块"
+    ],
+    "hint": "由大到小",
+    "explain": "表空间(Tablespace)包含多个数据文件和段;段由簇组成;簇是连续的数据页集合;页是最小 I/O 单位(默认 8K/16K/32K),映射到磁盘块。一张表/索引就是一个段",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "空间-段-簇-页-块"
+  },
+  {
+    "cat": "概念",
+    "q": "判断:一个数据文件可以属于多个表空间",
+    "a": [
+      "错",
+      "一个数据文件只能属于一个表空间",
+      "但一个表空间可以包含多个数据文件"
+    ],
+    "hint": "是 1:N 还是 N:N?",
+    "explain": "表空间和数据文件是 1:N 的关系——一个表空间可加多个 *.DBF,但每个 *.DBF 只属于一个表空间。这是 DM 存储设计的基本规则",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "1表空间→多文件,1文件→1表空间"
+  },
+  {
+    "cat": "概念",
+    "q": "事务的 4 种隔离级别从弱到强排列",
+    "a": [
+      "Read Uncommitted 脏读",
+      "Read Committed 读提交",
+      "Repeatable Reads 可重复读",
+      "Serializable 可串行化"
+    ],
+    "hint": "脏->提交->重复->串行",
+    "explain": "从弱到强:Read Uncommitted(允许脏读) → Read Committed(防脏读) → Repeatable Reads(防脏读+不可重复读) → Serializable(全防,最强但性能最差)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "脏-提交-重复-串行"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 创建表的完整 SQL 模板(含字段约束)",
+    "a": [
+      "CREATE TABLE EMPLOYEE (EMPLOYEE_ID INT NOT NULL, EMPLOYEE_NAME VARCHAR(20) NULL, EMAIL VARCHAR(50) NOT NULL, HIRE_DATE DATE NOT NULL);"
+    ],
+    "hint": "CREATE TABLE ... (列名 类型 NULL/NOT NULL, ...)",
+    "explain": "DM 建表语法 = `CREATE TABLE 表名 (列名 数据类型 [NOT] NULL, ...)`。字符用 VARCHAR(n),整数 INT,日期 DATE",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "CREATE TABLE 名(列 类型 NULL)"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 给已有表加一个字段的 SQL",
+    "a": [
+      "ALTER TABLE EMPLOYEE ADD IDENTITY_CARD VARCHAR(18);"
+    ],
+    "hint": "ALTER TABLE ... ADD ...",
+    "explain": "DM 加列语法:ALTER TABLE 表名 ADD 列名 类型;不需要 COLUMN 关键字也能用,但带上 ADD COLUMN(...) 也对(尤其是多列加括号语法)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "ALTER TABLE ADD 列名 类型"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 给表加主键约束的 SQL",
+    "a": [
+      "ALTER TABLE EMPLOYEE ADD CONSTRAINT PK_EMP PRIMARY KEY(EMPLOYEE_ID);"
+    ],
+    "hint": "ALTER ADD CONSTRAINT ... PRIMARY KEY(...)",
+    "explain": "DM 加主键:ALTER TABLE 表 ADD CONSTRAINT 约束名 PRIMARY KEY(列名)。建议显式给约束起名(PK_/UK_ 前缀),便于后期管理",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "ADD CONSTRAINT 名 PRIMARY KEY"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 删除表+级联删除外键的 SQL",
+    "a": [
+      "DROP TABLE EMPLOYEE CASCADE;"
+    ],
+    "hint": "DROP TABLE ... CASCADE",
+    "explain": "普通 DROP TABLE 遇外键引用会报错;加 CASCADE 关键字会同时删除表和相关引用完整性约束。慎用!",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DROP TABLE 名 CASCADE"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 全外连接的关键字写法",
+    "a": [
+      "FULL OUTER JOIN",
+      "不是 FULL OUTTER JOIN(那是笔误)",
+      "也叫 FULL JOIN"
+    ],
+    "hint": "OUTER 几个 T?",
+    "explain": "标准 SQL 是 FULL OUTER JOIN,只有一个 T。PPT 上的 FULL OUTTER JOIN(两个 T)是错的。OUTER 关键字可省,等价 FULL JOIN",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "OUTER 一个 T"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 删除整张表的所有数据,推荐用什么 SQL?",
+    "a": [
+      "TRUNCATE TABLE EMPLOYEE;"
+    ],
+    "hint": "TRUNCATE vs DELETE",
+    "explain": "清空整表用 TRUNCATE TABLE,不写日志超快;不要用 DELETE FROM TABLE 不带 WHERE,日志巨大且影响后续 INSERT 效率(PPT 12 反复警告)。但 TRUNCATE 不可回滚,慎用",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "清空整表用 TRUNCATE"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 集函数有哪 5 个?",
+    "a": [
+      "SUM 求和",
+      "AVG 求平均",
+      "MAX 最大值",
+      "MIN 最小值",
+      "COUNT 计数"
+    ],
+    "hint": "SAMMC",
+    "explain": "5 个标准集函数:SUM/AVG/MAX/MIN/COUNT。常和 GROUP BY 配套用,如 `SELECT YEAR(d), COUNT(*) FROM t GROUP BY YEAR(d);`",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SUM/AVG/MAX/MIN/COUNT"
+  },
+  {
+    "cat": "SQL",
+    "q": "DM 5 种约束类型是什么?",
+    "a": [
+      "NOT NULL 非空",
+      "UNIQUE 唯一",
+      "PRIMARY KEY 主键",
+      "FOREIGN KEY 外键",
+      "CHECK 检查"
+    ],
+    "hint": "非空/唯一/主/外/检查",
+    "explain": "5 种约束:NOT NULL(非空)、UNIQUE(唯一)、PRIMARY KEY(主键=非空+唯一+通常聚集索引)、FOREIGN KEY(外键)、CHECK(自定义如 AGE>0)。考试必考",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "NOT NULL/UNIQUE/PK/FK/CHECK"
+  },
+  {
+    "cat": "SQL",
+    "q": "判断:DM 中 DELETE 不带 WHERE 子句会报错防止误操作",
+    "a": [
+      "错",
+      "不会报错!会删除整表所有记录",
+      "危险操作,要用必先用 SELECT 验条件;清空表请用 TRUCATE"
+    ],
+    "hint": "会不会报错?",
+    "explain": "DELETE FROM table 不带 WHERE 不会报错,会真删全表所有记录(可 ROLLBACK 救)。这是高危操作,PPT 12 强调:UPDATE/DELETE 必检 WHERE",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DELETE 无 WHERE = 删全表"
+  },
+  {
+    "cat": "工具",
+    "q": "disql 连接数据库的标准命令格式",
+    "a": [
+      "./disql SYSDBA/SYSDBA@<ip>:<port>",
+      "./disql SYSDBA/SYSDBA@LOCALHOST:5236"
+    ],
+    "hint": "用户/密码@IP:端口",
+    "explain": "disql 标准格式:disql 用户/密码@IP:端口。DM 默认端口 5236。在 /home/dmdba/dm/dmdbms/bin 目录下执行",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "用户/密码@IP:5236"
+  },
+  {
+    "cat": "工具",
+    "q": "disql 中显示每条 SQL 执行耗时的命令",
+    "a": [
+      "SET TIMING ON;"
+    ],
+    "hint": "SET ... ON;",
+    "explain": "`SET TIMING ON;` 后续每条 SQL 都会显示执行耗时,调优必备。`SET TIME OFF;` 则不显示当前时间。注意 TIMING 和 TIME 是两个不同变量",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "TIMING=耗时,TIME=时间"
+  },
+  {
+    "cat": "工具",
+    "q": "disql 里把执行结果保存到文件的命令",
+    "a": [
+      "spool sql0201.txt",
+      "SQL 执行...",
+      "spool off"
+    ],
+    "hint": "spool ... spool off",
+    "explain": "disql 三步:`spool 文件名` 开始记录 → 执行 SQL → `spool off` 结束记录。查询结果会写入文件。`host` 命令在 disql 内执行 OS 命令(如 host cat sql0201.txt)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "spool/spool off"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 单机库的启停命令",
+    "a": [
+      "./dmserverd start",
+      "./dmserverd stop",
+      "ps -ef | grep dmserver 检查进程"
+    ],
+    "hint": "dmserverd 不是 dmserver",
+    "explain": "启停用的是 dmserverd(后面带 d),不是 dmserver(那是数据库进程本身)。位置在 /home/dmdba/dm/dmdbms/bin/。**绝对不能 kill -9!** 可能损坏数据文件",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "dmserverd start/stop"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 数据守护集群关闭顺序(自动切换模式)",
+    "a": [
+      "1.dmmonitord 监视器",
+      "2.dmwatcherd 备库守护",
+      "3.dmwatcherd 主库守护",
+      "4.dmserverd 主库",
+      "5.dmserverd 备库"
+    ],
+    "hint": "监视器→备守→主守→主库→备库",
+    "explain": "严格顺序:监视器(防自动接管)→备库守护(防重启)→主库守护(防重启)→主库→备库。顺序错了可能引起主备切换甚至守护进程组分裂!",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "监视器先关,备库最后关"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 数据守护集群启动顺序",
+    "a": [
+      "1.dmserverd 主库",
+      "2.dmserverd 备库",
+      "3.dmwatcherd 备库守护",
+      "4.dmwatcherd 主库守护",
+      "5.dmmonitord 监视器"
+    ],
+    "hint": "主库→备库→备守→主守→监视器",
+    "explain": "启动顺序与关闭相反:先主库实例 → 备库实例 → 备库守护进程 → 主库守护进程 → 监视器。注意守护要在实例之后启动",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "先实例后守护"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 数据守护集群手动切机命令",
+    "a": [
+      "在监视器中:login → show → switchover"
+    ],
+    "hint": "login,show,switchover",
+    "explain": "前台启监视器 `./dmmonitor dmmonitor.ini`,然后 login(具有 DBA 角色都可)→ show 查看主备状态 → switchover 切换 → 再 show 确认。切机前必检 HA 状态、数据库状态",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "login-show-switchover"
+  },
+  {
+    "cat": "工具",
+    "q": "DM HA 集群手动切机命令(凝思+corosync)",
+    "a": [
+      "在主机执行:crm node standby",
+      "用 crm_mon 持续观察"
+    ],
+    "hint": "crm node ...",
+    "explain": "HA 切机:`crm node standby` 把主机置为待命态,HA 软件会自动把资源(VIP/阵列/数据库)切到备机。切完用 `crm_mon` 持续监控。停 HA 软件用 `/etc/rc.d/init.d/corosync stop`(新版本)、openais(凝思)、heartbeat(麒麟)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "crm node standby"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 主备机判断依据是什么?",
+    "a": [
+      "看 /dbdata 和 /dbbak 阵列目录挂载在哪台",
+      "挂载了的是主机"
+    ],
+    "hint": "阵列目录挂哪",
+    "explain": "HA 集群中数据存储在共享磁盘阵列,主机才挂载阵列目录(/dbdata, /dbbak)。备机不挂载,所以谁挂着谁就是主机。停 HA 时要先停备再停主",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "挂阵列=主机"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 进入 dmrman 工具后,完全备份整库的 SQL",
+    "a": [
+      "BACKUP DATABASE '/dm8/data/DAMENG/dm.ini' FULL BACKUPSET '/dm8/data/DAMENG/bak_full';"
+    ],
+    "hint": "BACKUP DATABASE ... FULL BACKUPSET ...",
+    "explain": "dmrman 是脱机备份工具(库必须关闭)。完全备份语法:`BACKUP DATABASE '<dm.ini路径>' FULL BACKUPSET '<备份集目录>';` 增量备份把 FULL 换成 INCREMENT",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "BACKUP DATABASE FULL BACKUPSET"
+  },
+  {
+    "cat": "工具",
+    "q": "DM 逻辑备份导出全库的命令",
+    "a": [
+      "dexp sysdba/SYSDBA file=/dm8/backup/full.dmp full=y"
+    ],
+    "hint": "dexp ... full=y",
+    "explain": "dexp 是 DM 的逻辑导出工具(类似 Oracle 的 exp),file= 输出文件,full=y 导整库。位置在 <DM_HOME>/bin。导入用 dimp,加 ignore=y 忽略已存在对象",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "dexp file= full=y"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 创建表空间的 SQL",
+    "a": [
+      "CREATE TABLESPACE \"TBS\" DATAFILE '/dm8/data/DAMENG/TBS01.DBF' SIZE 32;"
+    ],
+    "hint": "DATAFILE ... SIZE ...",
+    "explain": "建表空间:CREATE TABLESPACE 名 DATAFILE 路径 SIZE 大小(单位 M)。表空间名加双引号防关键字冲突",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DATAFILE路径 SIZE M"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 给表空间扩容(加数据文件)的 SQL",
+    "a": [
+      "ALTER TABLESPACE \"TBS\" ADD DATAFILE '/dm8/data/DAMENG/TBS02.DBF' SIZE 32;"
+    ],
+    "hint": "ALTER ... ADD DATAFILE ...",
+    "explain": "扩展表空间用 ADD DATAFILE 加新文件。一个表空间可有多个数据文件,但一个数据文件只属于一个表空间",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "ADD DATAFILE"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 移动表空间数据文件到新位置的 4 步",
+    "a": [
+      "1.ALTER TABLESPACE TBS OFFLINE",
+      "2.ALTER TABLESPACE TBS RENAME DATAFILE 旧路径 TO 新路径",
+      "3.OS 上 mv 文件",
+      "4.ALTER TABLESPACE TBS ONLINE"
+    ],
+    "hint": "OFFLINE → RENAME → mv → ONLINE",
+    "explain": "4 步走:先离线表空间 → SQL 改路径 → OS 物理移动文件 → 上线。第 3 步 PPT 没明写但实际必做。多个数据文件每个都要 RENAME",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "OFFLINE-RENAME-mv-ONLINE"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 调整重做日志大小的 SQL",
+    "a": [
+      "ALTER DATABASE RESIZE LOGFILE 'DAMENG01.log' TO 500;"
+    ],
+    "hint": "ALTER DATABASE RESIZE LOGFILE ...",
+    "explain": "DM 默认 redo 日志 2 个文件×256M。OLTP 业务日志切换太频繁要扩大,建议 2*2048M。语法:ALTER DATABASE RESIZE LOGFILE '日志名' TO 大小(M)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "RESIZE LOGFILE TO 大小"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 设置表空间自动扩展上限的 SQL",
+    "a": [
+      "ALTER TABLESPACE \"ROLL\" DATAFILE 'ROLL.DBF' AUTOEXTEND ON MAXSIZE 512000;"
+    ],
+    "hint": "AUTOEXTEND ON MAXSIZE ...",
+    "explain": "防 ROLL/TEMP 把磁盘吃完。AUTOEXTEND ON 启用自动扩展,MAXSIZE 设上限。TEMP 表空间还要看 dm.ini 的 TEMP_SIZE 和 TEMP_SPACE_LIMIT",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "AUTOEXTEND ON MAXSIZE"
+  },
+  {
+    "cat": "表空间",
+    "q": "DM 查看所有表空间使用情况的视图",
+    "a": [
+      "DBA_DATA_FILES",
+      "V$TABLESPACE",
+      "DBA_FREE_SPACE"
+    ],
+    "hint": "DBA_/V$ 系列",
+    "explain": "3 个常用视图:DBA_DATA_FILES(数据文件)、V$TABLESPACE(动态表空间视图)、DBA_FREE_SPACE(剩余空间)。USER_TABLESPACES 看当前用户可见的表空间",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DBA_DATA_FILES"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 5 个预定义用户分别是什么?",
+    "a": [
+      "SYS 系统内置(不能登录)",
+      "SYSDBA 默认 DBA",
+      "SYSAUDITOR 审计",
+      "SYSSSO 安全",
+      "SYSDBO 数据库操作员"
+    ],
+    "hint": "5 个 SYS 开头的",
+    "explain": "DM 三权分立架构:SYS(不能登,系统内置) / SYSDBA(管理) / SYSAUDITOR(审计) / SYSSSO(安全策略) / SYSDBO(操作)。生产严禁应用直连 SYSDBA",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SYS/SYSDBA/审计/安全/操作"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 创建用户的 SQL",
+    "a": [
+      "CREATE USER TEST IDENTIFIED BY \"dameng123\";"
+    ],
+    "hint": "CREATE USER ... IDENTIFIED BY ...",
+    "explain": "建用户语法:CREATE USER 名 IDENTIFIED BY \"密码\"。注意密码用双引号(区分大小写),用户名不区分大小写",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "IDENTIFIED BY"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 授予用户系统权限的 SQL",
+    "a": [
+      "GRANT CREATE TABLE TO TEST;"
+    ],
+    "hint": "GRANT 权限 TO 用户",
+    "explain": "系统权限:GRANT 权限名 TO 用户名。常用:CREATE TABLE/VIEW/USER/ROLE/SCHEMA/TABLESPACE,ALTER DATABASE/TABLESPACE,DROP TABLESPACE",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "GRANT 权限 TO 用户"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 授予表的 SELECT 对象权限的 SQL",
+    "a": [
+      "GRANT SELECT ON DMHR.CITY TO TEST;"
+    ],
+    "hint": "GRANT 权限 ON 模式.对象 TO 用户",
+    "explain": "对象权限:GRANT 权限 ON 模式名.对象名 TO 用户名。表的对象权限有 ALTER/DELETE/INSERT/REFERENCES/SELECT/UPDATE,过程是 EXECUTE",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "GRANT ON 表 TO 用户"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 解锁被锁用户的存储过程调用",
+    "a": [
+      "CALL SP_UNLOCK_LOGIN('TEST');"
+    ],
+    "hint": "SP_UNLOCK_LOGIN",
+    "explain": "用户多次密码错误会被锁。解锁:管理工具右键登录名→解锁,或 SYSDBA 调 `CALL SP_UNLOCK_LOGIN('用户名')`。常因连接池配错密码反复尝试触发",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SP_UNLOCK_LOGIN"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 业务用户应该授哪个角色?(不要 DBA)",
+    "a": [
+      "RESOURCE",
+      "可读写本用户对象",
+      "加 VTI/SOI/SVI 给运维监控权限"
+    ],
+    "hint": "RESOURCE,不是 DBA",
+    "explain": "PPT 13 反复强调:业务用户**禁止**给 DBA 角色,默认用 RESOURCE(读写本用户对象)。监控加 VTI(V$动态视图)/SOI(SYS只读)/SVI(系统视图)。详见《DM8安全管理》",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "业务用 RESOURCE"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 密码策略 PWD_POLICY 设为 31 表示什么?",
+    "a": [
+      "满足全部 5 项策略",
+      "1+2+4+8+16 = 31",
+      "禁止与用户名相同 + 长度≥6 + 至少1大写 + 至少1数字 + 至少1特殊字符"
+    ],
+    "hint": "位掩码相加",
+    "explain": "PWD_POLICY 是位掩码:1=禁与用户名同 / 2=长度≥6 / 4=有大写 / 8=有数字 / 16=有特殊符号。31=1+2+4+8+16 全开。改 dm.ini 后必须重启,且只对新建用户生效",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "31=全规则"
+  },
+  {
+    "cat": "用户权限",
+    "q": "判断:DM 用户名区分大小写",
+    "a": [
+      "错",
+      "用户名不区分大小写",
+      "但密码区分大小写"
+    ],
+    "hint": "用户名 vs 密码",
+    "explain": "DM 规则:用户名**不区分**大小写(SYSDBA/sysdba/SysDba 等价),但密码**严格区分**。建用户/连接时务必注意。常考易错点",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "用户名忽略,密码严格"
+  },
+  {
+    "cat": "用户权限",
+    "q": "DM 创建角色并授权给用户的完整 3 步 SQL",
+    "a": [
+      "CREATE ROLE R1;",
+      "GRANT CREATE TABLE TO R1;",
+      "GRANT R1 TO TEST;"
+    ],
+    "hint": "建角色→授权角色→授角色给用户",
+    "explain": "角色 = 一组权限的集合,便于批量管理。3 步:CREATE ROLE → GRANT 权限 TO 角色 → GRANT 角色 TO 用户。启用/禁用用 SP_SET_ROLE('R1', 1/0)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "建角色,授角色,给用户"
+  },
+  {
+    "cat": "模式对象",
+    "q": "DM 创建模式的 SQL",
+    "a": [
+      "CREATE SCHEMA DAMENG AUTHORIZATION SYSDBA;"
+    ],
+    "hint": "CREATE SCHEMA ... AUTHORIZATION ...",
+    "explain": "建模式:CREATE SCHEMA 名 AUTHORIZATION 用户。建用户时自动建同名模式;用户也可建多个模式,但一个模式只属于一个用户",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "AUTHORIZATION 用户"
+  },
+  {
+    "cat": "模式对象",
+    "q": "DM 切换当前模式的 SQL",
+    "a": [
+      "SET SCHEMA DAMENG;"
+    ],
+    "hint": "SET SCHEMA ...",
+    "explain": "SYSDBA 用户想访问 DAMENG 模式下的对象,可以 `SET SCHEMA DAMENG;` 之后无需再加 DAMENG. 前缀。类似 Oracle 的 `ALTER SESSION SET CURRENT_SCHEMA`",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SET SCHEMA 名"
+  },
+  {
+    "cat": "模式对象",
+    "q": "DM 创建索引的 SQL(指定表空间)",
+    "a": [
+      "CREATE INDEX JOB_IND ON DMHR.JOB(JOB_ID) TABLESPACE DMHR;"
+    ],
+    "hint": "CREATE INDEX ... ON ...(...) TABLESPACE ...",
+    "explain": "语法:CREATE INDEX 索引名 ON 模式.表(列) TABLESPACE 表空间。指定表空间是为了把索引放到独立物理磁盘提升性能。重建索引:ALTER INDEX 名 REBUILD",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "INDEX ON 表(列) TABLESPACE"
+  },
+  {
+    "cat": "模式对象",
+    "q": "DM 报错\"不能修改聚集索引列\"的根本原因",
+    "a": [
+      "默认建主键时自动创建为聚集索引",
+      "设 PK_WITH_CLUSTER=0 可永久预防(主键变非聚集)"
+    ],
+    "hint": "PK_WITH_CLUSTER",
+    "explain": "DM 默认主键 = 聚集索引 → 改主键列就报错。三种解法:① 重建表 ② 在别列建聚集索引(原列降级为非聚集) ③ dm.ini 设 PK_WITH_CLUSTER=0(迁移前必置!)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "PK_WITH_CLUSTER=0"
+  },
+  {
+    "cat": "模式对象",
+    "q": "DM 哪些字段不该建索引?",
+    "a": [
+      "唯一值很少的字段(如\"性别\"只男/女)",
+      "表数据量很小",
+      "表频繁更新",
+      "表上已经太多索引"
+    ],
+    "hint": "低基数/小表/常更新/已多",
+    "explain": "反例:性别字段建索引浪费;小表全扫更快;频繁 UPDATE 表索引维护开销大于收益;一表上索引太多互相竞争。该建的:WHERE/JOIN/MIN-MAX 字段、过滤性好的字段",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "低基数/小表/勤更新"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 备份/还原/恢复三个名词分别是什么?",
+    "a": [
+      "备份:制作数据库副本到备份集",
+      "还原:用备份重建数据文件",
+      "恢复:重做归档日志推到最新一致点"
+    ],
+    "hint": "备份→还原→恢复",
+    "explain": "三步走的关系:备份(Backup)产生备份集 → 介质故障后用还原(Restore)重建数据文件 → 用恢复(Recover)应用归档日志到最新点。三个动作不可混淆",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "Backup/Restore/Recover"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 联机备份必须先做什么?",
+    "a": [
+      "开启归档",
+      "ALTER DATABASE MOUNT → ADD ARCHIVELOG → ARCHIVELOG → OPEN(4 步)"
+    ],
+    "hint": "归档",
+    "explain": "联机备份(库运行中)必须先开归档,不然报错。配置本地归档 4 步:MOUNT → ADD ARCHIVELOG 'TYPE=LOCAL,DEST=路径,FILE_SIZE=64,SPACE_LIMIT=0' → ARCHIVELOG → OPEN",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "联机备份要开归档"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 配置本地归档的 4 步 SQL",
+    "a": [
+      "ALTER DATABASE MOUNT;",
+      "ALTER DATABASE ADD ARCHIVELOG 'TYPE=LOCAL,DEST=/dm8/arch,FILE_SIZE=64,SPACE_LIMIT=0';",
+      "ALTER DATABASE ARCHIVELOG;",
+      "ALTER DATABASE OPEN;"
+    ],
+    "hint": "MOUNT-ADD-ARCHIVELOG-OPEN",
+    "explain": "严格 4 步:① MOUNT 模式 ② 加归档配置(类型/路径/单文件大小/空间上限) ③ 启用归档 ④ OPEN。归档类型有 LOCAL/REMOTE/TIMELY/ASYNC/REALTIME",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "MOUNT/ADD/ARCHIVELOG/OPEN"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 联机备份表空间的 SQL",
+    "a": [
+      "BACKUP TABLESPACE DMHR FULL TO TS_DMHR_FULL BACKUPSET '/dm8/data/DAMENG/bak/TS_DMHR_FULL';"
+    ],
+    "hint": "BACKUP TABLESPACE ... FULL TO ... BACKUPSET ...",
+    "explain": "联机表空间备份:BACKUP TABLESPACE 名 FULL TO 备份名 BACKUPSET '路径'。还需要库已开归档。也可备表(BACKUP TABLE)和归档(BACKUP ARCHIVE LOG ALL)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "BACKUP TABLESPACE FULL"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 物理备份和逻辑备份的工具分别是?",
+    "a": [
+      "物理:DMRMAN(脱机) + BACKUP SQL(联机)",
+      "逻辑:dexp 导出 / dimp 导入"
+    ],
+    "hint": "物理 vs 逻辑",
+    "explain": "物理备份(数据文件级):脱机用 DMRMAN,联机用 SQL BACKUP。逻辑备份(导成 dmp 文件,数据内容映像):dexp 导出/dimp 导入,适合迁移和归档。物理快但格式固定,逻辑慢但可改",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "物理=DMRMAN/SQL,逻辑=dexp/dimp"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 完全备份和增量备份的区别",
+    "a": [
+      "完全备份:所有数据",
+      "增量备份:与上次全备/增备相比变化的部分"
+    ],
+    "hint": "全 vs 差量",
+    "explain": "完全备份慢但还原简单;增量备份快但还原需要全备+所有增量链。核心系统典型策略:每周全备+每日增量,介质异地存放",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "全备整体,增备差量"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 检查备份集完整性的 RMAN 命令",
+    "a": [
+      "CHECK BACKUPSET '/dm8/data/DAMENG/bak_full';"
+    ],
+    "hint": "CHECK BACKUPSET ...",
+    "explain": "DMRMAN 工具命令:SHOW BACKUPSET 看信息 / CHECK BACKUPSET 校验完整性 / REMOVE BACKUPSET 删除 / LOAD BACKUPSET 导入。定期 CHECK 是巡检必做项",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "CHECK/SHOW/REMOVE/LOAD"
+  },
+  {
+    "cat": "备份还原",
+    "q": "DM 逻辑导入(dimp)忽略已存在对象错误的参数",
+    "a": [
+      "ignore=y"
+    ],
+    "hint": "ignore=...",
+    "explain": "dimp 导入时如果目标库已有同名对象会报错,加 `ignore=y` 跳过这类错误继续执行。完整示例:`dimp sysdba/SYSDBA file=full.dmp full=y ignore=y`",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "ignore=y 跳错"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 6 种集群形态分别是?",
+    "a": [
+      "HA 主备冷备(OS层)",
+      "DataWatch 数据守护",
+      "RWC 读写分离",
+      "DSC 共享存储",
+      "DPC 分布式计算",
+      "MPP 大规模并行"
+    ],
+    "hint": "HA/DW/RWC/DSC/DPC/MPP",
+    "explain": "6 种形态记忆:HA(冷备最弱) / DataWatch(主备日志同步,对应 Oracle Data Guard) / RWC(一写多读) / DSC(共享存储双活,对应 RAC) / DPC(存算分离,对应 TiDB) / MPP(并行,对应 Exadata)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "一冷四热"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 数据守护集群的核心机制是什么?",
+    "a": [
+      "主库 Redo 日志通过 MAL 系统传到备库",
+      "备库接收并重演 Redo → 数据同步",
+      "备库只读"
+    ],
+    "hint": "Redo 日志同步",
+    "explain": "DataWatch 核心:主库产生的 Redo 日志传给备库,备库重演实现同步。两种模式:事务一致(强一致,备库重演完才响应主库)/ 高性能(异步,先响应再重演)。备库**只读**",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "Redo 同步,备库只读"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 共享存储集群(DSC)的关键 RPO 和 RTO 指标",
+    "a": [
+      "RPO=0 数据零丢失",
+      "RTO<30s 故障切换 30 秒内"
+    ],
+    "hint": "RPO/RTO 各是?",
+    "explain": "DSC 是金融级高可用:RPO(Recovery Point Objective 数据恢复点)=0 即零丢失;RTO(Recovery Time Objective 恢复时间)<30 秒。靠 DMASM 自动存储管理器实现",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "RPO=0,RTO<30s"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 共享存储集群用的存储方案是什么?",
+    "a": [
+      "DMASM 自动存储管理器",
+      "对标 Oracle ASM",
+      "支持镜像存储、条带化、在线扩展磁盘组"
+    ],
+    "hint": "DM__M",
+    "explain": "DM 共享存储用自研的 DMASM(类似 Oracle ASM),性能接近裸设备但管理方便。提供镜像(故障组)、条带化、在线 rebalance,数据库进程绕过 OS 直读磁盘提升 I/O 效率",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DMASM"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 实时数据同步用什么工具?",
+    "a": [
+      "DMHS"
+    ],
+    "hint": "DM__S",
+    "explain": "DMHS = DM Heterogeneous Synchronization 异构同步软件。解析 redo 日志获取增量(对源端无侵入),以事务为最小复制单位。支持 DM/Oracle/MySQL/PG/DB2/SQL Server 之间。需源端开归档+逻辑附加日志",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "实时同步=DMHS"
+  },
+  {
+    "cat": "集群",
+    "q": "DM 数据迁移工具 DTS/DMHS/DMETL 各适用什么场景?",
+    "a": [
+      "DTS:一次性大批量迁移,有停机窗口",
+      "DMHS:实时增量同步,容灾,平滑迁移",
+      "DMETL:数据需要清洗转换,异构集成"
+    ],
+    "hint": "一次/实时/清洗",
+    "explain": "DTS 免费(随产品)、对象最全但只能一次性;DMHS 收费、支持实时但只迁表/视图/序列;DMETL 收费、支持复杂数据清洗转换。生产同步用 DMHS,迁移上线用 DTS,跨业务转换用 DMETL",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "DTS一次/DMHS实时/DMETL清洗"
+  },
+  {
+    "cat": "集群",
+    "q": "DM HA 集群和数据守护集群的核心区别",
+    "a": [
+      "HA 集群:依赖 OS 级 HA 软件,数据放共享存储,备机冷备",
+      "数据守护:DM 自身机制,各节点存一份完整数据,Redo 日志同步"
+    ],
+    "hint": "OS 软件 vs DM 自身",
+    "explain": "HA 是 OS 层方案(凝思 openais/麒麟 heartbeat/通用 corosync),备机冷备共享存储一份数据;数据守护是 DM 内部方案,主备各一份数据,日志同步,可异地容灾",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "HA=OS层,守护=DM内部"
+  },
+  {
+    "cat": "集群",
+    "q": "DM DataWatch 集群的两种同步模式是?",
+    "a": [
+      "事务一致模式:备库先重演完日志再响应主库(强一致)",
+      "高性能模式:备库先响应主库再重演日志(异步)"
+    ],
+    "hint": "强一致 vs 高性能",
+    "explain": "事务一致模式数据强一致但性能略差;高性能模式吞吐高但备库可能略滞后(异步)。生产看业务对一致性的要求选择",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "一致 vs 性能"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 故障三大类是什么?",
+    "a": [
+      "事务故障:逻辑错误/约束违反/SQL错",
+      "系统故障:进程崩溃,文件还在",
+      "介质故障:磁盘损坏/无法重启"
+    ],
+    "hint": "事务/系统/介质",
+    "explain": "PPT 12 标准分类:事务故障(单条 SQL 出错,rollback 处理) / 系统故障(进程挂,实例重启自动崩溃恢复) / 介质故障(磁盘坏,从备份+归档恢复,最严重)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "事务/系统/介质"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 数据库无法访问问题排查 5 步法",
+    "a": [
+      "1.网络(ping/telnet)",
+      "2.内存(free)",
+      "3.CPU(top)",
+      "4.IO(iostat)",
+      "5.系统/SQL日志"
+    ],
+    "hint": "网络-内存-CPU-IO-日志",
+    "explain": "PPT 12 标准排查序列。注意:ping 通≠通,要用 telnet 端口(应用层协议),99% 能确认网络问题。日志在 <DM_HOME>/log/",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "五步:网内CPU IO 日"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 报错\"回滚记录版本太旧\"的原因和参数",
+    "a": [
+      "UNDO_RETENTION 太小,回滚段被 purge",
+      "调大 UNDO_RETENTION",
+      "SP_SET_PARA_DOUBLE_VALUE(1,'UNDO_RETENTION',...)"
+    ],
+    "hint": "UNDO 保留时长",
+    "explain": "事务读取的旧版本数据已被 purge 清理 → 报 -7120。生产解决方案是调大 UNDO_RETENTION(默认 90s,长事务调到几分钟到几小时)。PPT 演示是反向调小为了快速 purge,生产应反向操作",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "UNDO_RETENTION 调大"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 查所有活动会话的 SQL",
+    "a": [
+      "SELECT * FROM V$SESSIONS WHERE STATE='ACTIVE';"
+    ],
+    "hint": "V$SESSIONS WHERE STATE=...",
+    "explain": "V$SESSIONS 是 DM 最常用的动态性能视图。STATE 字段 ACTIVE/IDLE。常关注 last_recv_time(最后接收时间)、sql_text、clnt_ip、thrd_id(可 pstack 看堆栈)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "V$SESSIONS STATE='ACTIVE'"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 查阻塞和被阻塞 SQL 的关键视图组合",
+    "a": [
+      "V$SESSIONS",
+      "V$LOCK(关注 block=1)",
+      "V$TRXWAIT(有记录就是阻塞)"
+    ],
+    "hint": "3 个 V$ 视图",
+    "explain": "经典 SQL 三剑客:V$SESSIONS(会话) join V$LOCK(锁,block=1 即阻塞) join V$TRXWAIT(事务等待,有记录就是阻塞)。释放阻塞用 sp_close_session(SESS_ID)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "sessions+lock+trxwait"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 杀死阻塞会话的存储过程",
+    "a": [
+      "CALL sp_close_session(<SESS_ID>);"
+    ],
+    "hint": "sp_close_session",
+    "explain": "找到阻塞源会话 ID 后,SYSDBA 调用 sp_close_session(ID) 强制断开。注意是 sp_(小写),CALL 关键字可省。终结后业务方应用要重连",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "sp_close_session"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 数据库运行日志的位置和命名",
+    "a": [
+      "<DM_HOME>/log/dm_DMSERVER_YYYYMM.log"
+    ],
+    "hint": "log 目录下",
+    "explain": "3 个关键日志:dm_DMSERVER_YYYYMM.log(运行日志,启停/错误/检查点) / dm_DMAP_YYYYMM.log(dmap 服务) / dmsql_*.log(SQL 日志,可作部分审计)。看到 \"SYSTEM IS READY\" 表示启动完成",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "log/dm_DMSERVER_YYYYMM"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 启动日志中表示\"启动完成可对外服务\"的关键字符串",
+    "a": [
+      "SYSTEM IS READY"
+    ],
+    "hint": "SYSTEM 后面...",
+    "explain": "在 dm_DMSERVER_YYYYMM.log 中看到 `SYSTEM IS READY.` 即数据库启动完成可对外服务。前面有版本/许可证/控制文件备份等步骤,出错都看这里",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SYSTEM IS READY"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 数据库 SQL 日志开关在哪个文件?",
+    "a": [
+      "dm.ini 里 SVR_LOG=1 是总开关",
+      "sqllog.ini 里详细配置(SQL_TRACE_MASK/SWITCH_MODE/FILE_NUM)"
+    ],
+    "hint": "两个 ini 文件配合",
+    "explain": "两步:① dm.ini 设 SVR_LOG=1 + SVR_LOG_NAME=SLOG_ALL ② 同名配在 sqllog.ini。改 sqllog.ini 后调 SP_REFRESH_SVR_LOG_CONFIG() 即生效不用重启。**必配 SWITCH_MODE 和 FILE_NUM 防日志撑爆磁盘**",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "dm.ini+sqllog.ini"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 报错\"License violation detected\"怎么解决?",
+    "a": [
+      "数据库 key 文件过期",
+      "更换 <DM_HOME>/bin 下的 key 文件"
+    ],
+    "hint": "key 文件",
+    "explain": "启动报 License violation detected, or product has expired. System halt! 是 key 文件过期。联系达梦获取新 key,替换 <DM_HOME>/bin/ 下的文件即可",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "key 文件过期"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 排查长耗时 SQL 需要开启的两个参数",
+    "a": [
+      "ENABLE_MONITOR=1",
+      "MONITOR_TIME 设阈值"
+    ],
+    "hint": "MONITOR 系列",
+    "explain": "V$LONG_EXEC_SQLS 视图记录长耗时 SQL,前提是 ENABLE_MONITOR=1 且 MONITOR_TIME 设了阈值(用 SP_SET_LONG_TIME(1000) 设最小记录时间)。但开 monitor 装载性能下降 5%,迁移期间应关闭",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "MONITOR + LONG_TIME"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 数据库默认监听端口是?",
+    "a": [
+      "5236"
+    ],
+    "hint": "5开头的",
+    "explain": "DM 数据库默认 TCP 端口 5236。disql 连接、JDBC URL(jdbc:dm://host:5236)、检查连接数(netstat -anp | grep 5236)都用这个端口。可改 dm.ini 的 PORT_NUM 改端口",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "5236"
+  },
+  {
+    "cat": "运维",
+    "q": "DM 数据物理一致性检查工具",
+    "a": [
+      "dmdbchk"
+    ],
+    "hint": "dm__chk",
+    "explain": "dmdbchk 在数据库**正常关闭**后校验数据文件完整性,检查内容:数据文件大小 / 索引合法性 / 数据页 / 系统对象 ID。引起宕库的严重故障常用此工具判断",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "dmdbchk"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM CREATE TABLE 中设主键的两种合法写法",
+    "a": [
+      "行内: id NUMBER(20) PRIMARY KEY",
+      "独立行: 所有字段定义后单独一行 PRIMARY KEY (id)"
+    ],
+    "hint": "行内 / 独立行",
+    "explain": "两种合法语法选其一,不要混。多列联合主键只能用独立行写法:PRIMARY KEY (col1, col2)。建表必须有主键,否则没法做外键引用。**易踩坑**: id NUMBER(20), primary key as ID标识 这种语法不存在(把 docx 备注当 SQL)",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "行内或独立行"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM 建表时 NOT NULL 等约束的位置和分隔规则",
+    "a": [
+      "约束直接跟类型,不用逗号:name VARCHAR(64) NOT NULL",
+      "逗号只在**字段之间**用,**约束之间用空格**",
+      "可堆多个约束: id NUMBER(20) PRIMARY KEY NOT NULL"
+    ],
+    "hint": "约束跟类型,空格分隔",
+    "explain": "易踩坑:写成 name VARCHAR(64), NOT NULL 报语法错。规则:逗号只在字段之间用,约束之间用空格",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "约束跟类型,空格分隔"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM 中 NUMBER(n) 和 INT 的区别",
+    "a": [
+      "NUMBER(n): 最多 n 位的数字,可加小数 NUMBER(10,2)",
+      "INT: 普通整数,**不接长度参数**",
+      "错误: INT(20) 不存在这种类型"
+    ],
+    "hint": "长度参数",
+    "explain": "DM/Oracle 用 NUMBER(n) 灵活控制精度;INT 是简化整数类型不带括号。MySQL 写 INT(20) 合法(显示宽度),DM 不行。建大整数列必用 NUMBER",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "NUMBER带长度,INT不带"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM 外键的两种合法写法,不要混用",
+    "a": [
+      "行内简写: st_id NUMBER(20) REFERENCES SUBSTATION(id)",
+      "独立约束行: FOREIGN KEY (st_id) REFERENCES SUBSTATION(id)"
+    ],
+    "hint": "REFERENCES vs FOREIGN KEY",
+    "explain": "易混淆!**两种写法不要混**。行内关键字是 REFERENCES(没 FOREIGN KEY);独立行用 FOREIGN KEY (列) REFERENCES 表(列)。错误示范: st_id NUMBER(20) FOREIGN KEY substation(id) — 既用 FOREIGN KEY 又没写 REFERENCES,语法错",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "行内REFERENCES,独立FOREIGN KEY"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM 让某列默认值为当前系统时间的写法",
+    "a": [
+      "insert_time TIMESTAMP DEFAULT SYSDATE"
+    ],
+    "hint": "DEFAULT + 函数",
+    "explain": "DEFAULT 后跟表达式或函数,SYSDATE 是 DM 内置函数返回当前系统时间。INSERT 时不指定该列就自动填当前时间。常用于审计字段(created_at/updated_at)",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "DEFAULT SYSDATE"
+  },
+  {
+    "cat": "SQL-DDL",
+    "q": "DM 建表里能用 AS 中文 标注字段含义吗?",
+    "a": [
+      "不能,SQL 没这种语法",
+      "中文备注用 COMMENT 独立语句:COMMENT ON COLUMN 表.列 IS '说明';",
+      "或者干脆不写"
+    ],
+    "hint": "AS / COMMENT",
+    "explain": "易踩坑:看到大纲文档里的\"字段名/类型/备注/中文名\"表格,以为可以写 id NUMBER(20) PRIMARY KEY AS ID标识 — 错!那只是文档说明,不是 SQL。中文备注要用 COMMENT 单独写",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "AS不行,COMMENT独立"
+  },
+  {
+    "cat": "SQL-DML",
+    "q": "DM INSERT 时字符串值的写法",
+    "a": [
+      "必须用单引号: INSERT INTO substation VALUES (1, 'sub1', 1);",
+      "数字不用引号,日期也用单引号: '2017-01-01 12:00:00'"
+    ],
+    "hint": "单引号",
+    "explain": "VARCHAR/CHAR/DATE/TIMESTAMP 类型的值要单引号,数字不用。常见错误: VALUES (1, sub1, 1) — SQL 把 sub1 当成列名找,找不到就报错",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "字符串单引号"
+  },
+  {
+    "cat": "SQL-DML",
+    "q": "DM INSERT 时让某列走默认值的合法写法",
+    "a": [
+      "A. 列名只列要给的: INSERT INTO t (id, name) VALUES (1, 'a');",
+      "B. 用 DEFAULT 关键字: VALUES (1, 'a', DEFAULT)",
+      "错: VALUES (1, 'a', ) 留空逗号语法错"
+    ],
+    "hint": "省列 / DEFAULT",
+    "explain": "两种合法方法选一。**错误**: VALUES (1, 'a', ) 这种逗号留空不存在。多行 VALUES 时每行字段数必须一致,如果第一行要走 DEFAULT 而其他行不要,只能拆成两条 INSERT",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "省列名 或 DEFAULT"
+  },
+  {
+    "cat": "SQL-DML",
+    "q": "DM 一次 INSERT 多行的简便写法",
+    "a": [
+      "INSERT INTO t (id, name) VALUES (1,'a'), (2,'b'), (3,'c');"
+    ],
+    "hint": "VALUES 后多个 () 用逗号分隔",
+    "explain": "标准 SQL 多行插入:VALUES 后每个括号是一行,逗号分隔。比每行一条 INSERT 快得多(只走一次解析)。前提:每行字段数必须一致",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "VALUES (...),(...),(...)"
+  },
+  {
+    "cat": "SQL-DML",
+    "q": "DM INSERT/UPDATE/DELETE 后必做的关键命令和原因",
+    "a": [
+      "COMMIT;",
+      "不 COMMIT 别的会话看不到改动,关闭窗口数据丢失"
+    ],
+    "hint": "事务相关",
+    "explain": "DM/Oracle 默认事务模式,DML 操作后**事务还没提交**——\"我假装写进去了,但还可以回滚\"。不 COMMIT 后果:① 别的连接看不到改动 ② 关掉窗口数据丢失。COMMIT 之后才是\"真的写入数据库\"。回滚用 ROLLBACK",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "COMMIT 才入库"
+  },
+  {
+    "cat": "SQL-DQL基础",
+    "q": "DM SELECT DISTINCT 的位置规则",
+    "a": [
+      "DISTINCT 必须**紧跟 SELECT**: SELECT DISTINCT name FROM ...",
+      "错: SELECT name FROM t DISTINCT name (DISTINCT 不是独立子句)"
+    ],
+    "hint": "紧跟 SELECT",
+    "explain": "DISTINCT 是 SELECT 的修饰词,不是独立子句。SELECT DISTINCT a, b 按 (a,b) **整行组合**去重,不是按某一列。如果想看每列各自的不同值,得分别查询",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "DISTINCT 紧跟 SELECT"
+  },
+  {
+    "cat": "SQL-DQL基础",
+    "q": "DM ORDER BY 升序和降序的关键字",
+    "a": [
+      "ASC 升序(默认,可省略)",
+      "DESC 降序(不是 desg/dsec)"
+    ],
+    "hint": "两个3字母关键字",
+    "explain": "ASC=ascending(升),DESC=descending(降)。常见错拼:DESG / DSEC / DESCI 都不对,只有 DESC。ORDER BY 多列分别指定: ORDER BY a DESC, b ASC",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "ASC升 DESC降"
+  },
+  {
+    "cat": "SQL-DQL基础",
+    "q": "DM SELECT * 想拼接新列的合法写法",
+    "a": [
+      "用表名: SELECT t.*, CASE...END AS new_col FROM t;",
+      "或列出全部列: SELECT id, name, ..., new_col FROM t;",
+      "错: SELECT *, new_col FROM t (不一定能跑)"
+    ],
+    "hint": "表名.*",
+    "explain": "SQL 标准里 * 不能和其他列直接混用。规则:带表名前缀 表.* 可以(JOIN 时常用 a.*, b.name 这种混合);单独 * 不能拼新列",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "用 表名.*"
+  },
+  {
+    "cat": "SQL-JOIN",
+    "q": "DM 两表内连接的标准 SQL 骨架",
+    "a": [
+      "SELECT a.name, b.name FROM substation a INNER JOIN breaker b ON a.id = b.st_id;"
+    ],
+    "hint": "INNER JOIN ... ON ...",
+    "explain": "必须的元素:INNER JOIN(关键字) + 表名 + 别名(可选) + ON 连接条件。**忘写 ON 会产生笛卡尔积**(每行×每行,4×4=16 行的恐怖结果)。两表都起短别名(a/b)更对称易读",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "INNER JOIN ... ON ..."
+  },
+  {
+    "cat": "SQL-JOIN",
+    "q": "DM 4 种 JOIN 的语义区别",
+    "a": [
+      "INNER JOIN:只保留两边都匹配的行(最常用)",
+      "LEFT JOIN:左表全保留,右表匹配不到填 NULL",
+      "RIGHT JOIN:右表全保留,左表匹配不到填 NULL",
+      "FULL JOIN:两边都全保留,匹配不到填 NULL"
+    ],
+    "hint": "内/左/右/全",
+    "explain": "业务选择:① 只要两边都有的关联记录 → INNER ② 主表所有记录都要展示 → LEFT(主表放左) ③ 全量比对 → FULL。LEFT 最常用,RIGHT 几乎不用(可调换表顺序用 LEFT 代替)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "内左右全"
+  },
+  {
+    "cat": "SQL-子查询",
+    "q": "DM 子查询 IN 的内外字段命名规则(常见误区)",
+    "a": [
+      "外层主键,内层外键",
+      "外层 WHERE substation.id IN (内层 SELECT breaker.st_id ...)"
+    ],
+    "hint": "外主键内外键",
+    "explain": "易踩坑!以为外层用 id,内层就得用 id。**实际上内外是两张不同的表,字段名不同**。规则:看外层 WHERE 测试的是哪张表的列(主键),内层 SELECT 应取**指向那个主键的列**(外键)。**结果碰巧对 ≠ 思路对**——数据巧合会掩盖逻辑错误",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "外主键内外键"
+  },
+  {
+    "cat": "SQL-子查询",
+    "q": "DM 子查询返回多行时用 IN 还是 =?",
+    "a": [
+      "多行用 IN",
+      "单行可用 = 或 IN",
+      "用 = 但内层返回多行 → 报错"
+    ],
+    "hint": "IN vs =",
+    "explain": "WHERE id = (SELECT st_id FROM ... WHERE brk_type=100) 如果内层返回多行就报错 'single-row subquery returns more than one row'。永远用 IN 最安全。返回多行用 IN/EXISTS,返回单行 = 和 IN 都行",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "多行必 IN"
+  },
+  {
+    "cat": "SQL-子查询",
+    "q": "DM 同一需求 找有 brk_type=100 断路器的厂站名 的两种写法",
+    "a": [
+      "JOIN: SELECT a.name FROM substation a INNER JOIN breaker b ON a.id=b.st_id WHERE b.brk_type=100;",
+      "子查询: SELECT name FROM substation WHERE id IN (SELECT st_id FROM breaker WHERE brk_type=100);"
+    ],
+    "hint": "两种思路",
+    "explain": "两种结果一样,思路不同。JOIN:把两张表拼成一张大表,再过滤;子查询:用一张表的结果当另一张表的条件。何时用哪个?① 两表数据都要展示 → JOIN ② 只要一张表数据,另一张做过滤条件 → 子查询",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "JOIN 拼表,子查询当条件"
+  },
+  {
+    "cat": "SQL-集合运算",
+    "q": "DM UNION 和 UNION ALL 的区别",
+    "a": [
+      "UNION ALL:直接拼接,**不去重**(快)",
+      "UNION:拼接 + 自动去重(慢,要排序)",
+      "UNION = UNION ALL + DISTINCT"
+    ],
+    "hint": "去重否",
+    "explain": "性能差距明显:UNION 比 UNION ALL 慢(去重要排序)。如果两段查询结果没重复,**优先 UNION ALL**(更快)。两边的列数和列类型必须一致,列名以**第一段**为准",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "ALL=不去重快"
+  },
+  {
+    "cat": "SQL-集合运算",
+    "q": "DM 同需求 查 st_no=1 和 st_no=3 的厂站 的 4 种写法",
+    "a": [
+      "IN: WHERE st_no IN (1, 3)  ← 推荐",
+      "OR: WHERE st_no=1 OR st_no=3",
+      "UNION ALL: 两段 WHERE 拼起来",
+      "UNION: 同上但去重(慢)"
+    ],
+    "hint": "4 种",
+    "explain": "对比:① IN 最简洁,条件多时优势大 ② OR 适合 ≤2 个条件 ③ UNION ALL 适合两段查询**结构完全不同**(比如查两张表) ④ UNION 自动去重但慢。同表同列等值条件首选 **IN**",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "IN首选"
+  },
+  {
+    "cat": "SQL-CASE",
+    "q": "DM CASE WHEN 在 SQL 中的位置",
+    "a": [
+      "CASE...END 是一个表达式,放在 SELECT 列里",
+      "也可放 WHERE/ORDER BY/GROUP BY 里",
+      "不能单独成子句"
+    ],
+    "hint": "虚拟列",
+    "explain": "错误示范:GROUP BY gender CASE WHEN ... END; — SQL 没这种语法。CASE 是**虚拟列**,目的是替代一个值。SELECT 里:SELECT id, CASE WHEN x>1 THEN 'A' ELSE 'B' END AS new_col FROM t;",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "CASE 是表达式"
+  },
+  {
+    "cat": "SQL-CASE",
+    "q": "DM CASE WHEN 的完整语法骨架和易错点",
+    "a": [
+      "CASE WHEN 条件1 THEN 结果1 WHEN 条件2 THEN 结果2 ... ELSE 默认 END",
+      "字符串结果要单引号: THEN 'M' ELSE 'W'",
+      "数字不用引号"
+    ],
+    "hint": "WHEN/THEN/ELSE/END",
+    "explain": "骨架:CASE 开头 → 多个 WHEN...THEN... 分支 → ELSE 默认值(可省略,省了是 NULL) → END 结尾(必须)。整个 CASE...END 算一个表达式可加 AS 别名。常见错: THEN M(没引号) → 报错",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "WHEN/THEN/ELSE/END"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM GROUP BY + COUNT 的基本语法和限制",
+    "a": [
+      "SELECT brk_type, COUNT(*) AS cnt FROM breaker GROUP BY brk_type;",
+      "SELECT 里只能出现**分组列**和**聚合函数**,其它字段会报错"
+    ],
+    "hint": "分组列+聚合",
+    "explain": "骨架:SELECT 分组列, 聚合函数 FROM 表 GROUP BY 分组列。**关键限制**:不在 GROUP BY 里的字段不能直接 SELECT(每组多个值,SQL 不知拿哪个)。例: SELECT id, brk_type, COUNT(*) FROM breaker GROUP BY brk_type 会报错(id 不在分组里)",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "SELECT只能含分组列+聚合"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM WHERE vs HAVING 30 秒判断法",
+    "a": [
+      "看条件里有没有聚合函数(COUNT/SUM/AVG/MAX/MIN)",
+      "有 → HAVING",
+      "没有 → WHERE"
+    ],
+    "hint": "看聚合函数",
+    "explain": "原理:WHERE 在 GROUP BY **之前**执行,那时还没分组没法 COUNT;HAVING 在 GROUP BY **之后**,可用聚合函数。例: brk_type=100 → WHERE; count(*)>1 → HAVING; insert_time>'2017-01-01' → WHERE; avg(score)>80 → HAVING",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "有聚合就HAVING"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM 为什么 WHERE COUNT(*) > 1 一定报错?",
+    "a": [
+      "WHERE 在 GROUP BY 之前执行",
+      "执行 WHERE 时还没分组,根本没'组的数量'概念",
+      "聚合函数必须分组后才有意义,所以放 HAVING"
+    ],
+    "hint": "执行顺序",
+    "explain": "按执行顺序:FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY。WHERE 时'一行一行看',不是'一组一组看'。COUNT/SUM/AVG/MAX/MIN 这些聚合函数都需要分组上下文,只能在 HAVING/SELECT 里用",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "WHERE在分组前"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM 三件套 SQL: WHERE + GROUP BY + HAVING 的完整骨架",
+    "a": [
+      "SELECT 列, 聚合函数 FROM 表 WHERE 行条件 GROUP BY 分组列 HAVING 组条件;"
+    ],
+    "hint": "WHERE → GROUP BY → HAVING",
+    "explain": "写法顺序:WHERE 写在 FROM 后、GROUP BY 之前;HAVING 写在 GROUP BY 之后。先 WHERE 把不要的行扔掉(对行过滤),再 GROUP BY 分组,再 HAVING 把不要的组扔掉(对组过滤)。先减后分组效率更好",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "WHERE→GROUP BY→HAVING"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM 5 个常用聚合函数",
+    "a": [
+      "COUNT(*) 行数",
+      "SUM(列) 求和",
+      "AVG(列) 平均值",
+      "MAX(列) 最大值",
+      "MIN(列) 最小值"
+    ],
+    "hint": "5 个",
+    "explain": "聚合函数 = 把多行折叠成一个值。COUNT(*) 数所有行,COUNT(列名) 只数该列**非 NULL** 的行,COUNT(1) 等同 COUNT(*)。配 GROUP BY 用最多。也可单独用: SELECT AVG(score) FROM students;",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "COUNT/SUM/AVG/MAX/MIN"
+  },
+  {
+    "cat": "SQL-分组聚合",
+    "q": "DM 数字保留 n 位小数的函数",
+    "a": [
+      "ROUND(数, n)",
+      "例: ROUND(AVG(score), 2)"
+    ],
+    "hint": "四舍五入",
+    "explain": "ROUND(数, n) 保留 n 位小数,四舍五入。常用于聚合后: ROUND(AVG(score), 2) AS avg_score。其他相关:TRUNC(数, n) 截断不四舍五入;CEIL(数) 向上取整;FLOOR(数) 向下取整",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-09",
+    "hook": "ROUND(数,2)"
+  },
+  {
+    "cat": "SQL-执行顺序",
+    "q": "DM SQL 6 大子句的写法顺序 vs 执行顺序(金钥匙)",
+    "a": [
+      "写法: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY",
+      "执行: FROM(1) → WHERE(2) → GROUP BY(3) → HAVING(4) → SELECT(5) → ORDER BY(6)"
+    ],
+    "hint": "写≠执行",
+    "explain": "**金钥匙**:SQL 必须知道执行顺序与写法顺序不同。读 SQL 时按执行顺序读才能理清:① FROM 找表 ② WHERE 过滤行 ③ GROUP BY 分组 ④ HAVING 过滤组 ⑤ SELECT 选列 ⑥ ORDER BY 排序。**SELECT 写在最前,但实际执行倒数第二**。这解释了为什么 WHERE 不能用聚合函数等一系列规则",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "FROM-WHERE-GROUP-HAVING-SELECT-ORDER"
+  },
+  {
+    "cat": "SQL-执行顺序",
+    "q": "DM 写复杂 SQL 的方法论(老师演示的)",
+    "a": [
+      "分步骤构建,不要一次写完",
+      "1. SELECT * FROM 表 看全数据",
+      "2. 加 WHERE 过滤再看",
+      "3. 加 GROUP BY 再看",
+      "4. 最后加 HAVING",
+      "每加一步检查一次"
+    ],
+    "hint": "逐步加条件",
+    "explain": "老师在 chaxun(8) 示范的方法:不要上来就写整条复杂 SQL。分步:① SELECT * FROM t; 看全数据 → ② 加 WHERE 看筛选效果 → ③ 加 GROUP BY 看分组 → ④ 加 HAVING 看筛后效果。每步出错能立刻发现,比一次写完调试半天高效",
+    "weak_count": 0,
+    "correct_streak": 0,
+    "last_wrong_at": null,
+    "hook": "分步建SQL"
+  }
+]

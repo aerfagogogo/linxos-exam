@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "subjects": [
+    {
+      "id": "linxos",
+      "name": "凝思操作系统",
+      "file": "linxos.json"
+    },
+    {
+      "id": "dm8",
+      "name": "达梦数据库",
+      "file": "dm8.json"
+    }
+  ]
+}

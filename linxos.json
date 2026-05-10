@@ -1037,5 +1037,91 @@
       "M1 写 shutdown 不带选项;M4 误判 -k 行为"
     ],
     "hook": "-h 关 / -r 重启 / -k 只警告"
+  },
+  {
+    "cat": "用户管理",
+    "q": "用户在终端 `su - 用户名` 能登录,但 lightdm 图形登录始终提示密码错误。最可能的原因?",
+    "a": [
+      "账户已过期",
+      "账户过期",
+      "chage 设置的账户过期日已过",
+      "PAM account 检查失败(账户过期)"
+    ],
+    "hint": "PAM 链差异 + 兜底提示",
+    "explain": "lightdm 走完整 PAM 链含 account 检查,su 默认**跳过** account 只验密码。lightdm 的'密码错误'是统一兜底提示——账户过期/被锁/PAM access 限制 都显示这一句。真相在 /var/log/auth.log。修复:`chage -E -1 用户名`",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "终端能进图形不能进=账户过期"
+  },
+  {
+    "cat": "用户管理",
+    "q": "`chage -E -1 nusp` 的含义",
+    "a": [
+      "设 nusp 账户永不过期",
+      "账户过期日设为永不过期",
+      "永不过期"
+    ],
+    "hint": "-1 = ?",
+    "explain": "-E 是账户过期日期。`-E -1` 表示永不过期;`-E 2027-12-31` 表示该日过期。日期格式 YYYY-MM-DD",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "-E -1 永不过期"
+  },
+  {
+    "cat": "用户管理",
+    "q": "强制用户 tom 下次登录必须改密码的 chage 命令",
+    "a": [
+      "chage -d 0 tom"
+    ],
+    "hint": "-d 0",
+    "explain": "-d 是上次改密码日期。设为 0 等于'非常久以前',系统认为密码立即过期,下次登录强制改。常用于新建用户/密码泄露后",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "-d 0 强制改密"
+  },
+  {
+    "cat": "用户管理",
+    "q": "su 和 lightdm 在 PAM 认证上的核心差异(为什么终端能进图形不能进)?",
+    "a": [
+      "su 只走认证部分(验密码),不走完整 account 检查;lightdm 走完整 PAM 链含 account 检查"
+    ],
+    "hint": "account 检查",
+    "explain": "PAM 链分四段:auth(认证)/account(账户状态)/password(改密)/session(会话)。su 默认跳过 account,所以账户过期/禁用等情况 su 仍能进。lightdm 走完整链,account 失败直接拒绝并显示'密码错误'(误导)",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "su 跳 account,lightdm 全走"
+  },
+  {
+    "cat": "用户管理",
+    "q": "查看用户 tom 的账户/密码所有有效期设置的命令",
+    "a": [
+      "chage -l tom",
+      "chage --list tom"
+    ],
+    "hint": "chage 哪个选项",
+    "explain": "chage -l 列出所有时间字段:账户过期日 / 上次改密日 / 密码最长使用天数 / 警告天数 / 宽限期。排查登录问题第一步",
+    "weak_count": 1,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "chage -l 查全部"
+  },
+  {
+    "cat": "用户管理",
+    "q": "图形登录提示'密码错误'但密码确实正确,**可靠**的排查路径?",
+    "a": [
+      "看 /var/log/auth.log 或 journalctl -xe 找 PAM 拒绝的真实原因",
+      "/var/log/auth.log",
+      "journalctl -xe"
+    ],
+    "hint": "看哪个日志,**别信图形提示**",
+    "explain": "lightdm 的'密码错误'是统一兜底提示——账户过期/账户锁定(faillock)/PAM access.conf 限制/账户禁用 都显示这一句。/var/log/auth.log(或 journalctl -xe)里有 PAM 拒绝的精确原因。**永远不要相信图形登录的错误提示文字**",
+    "weak_count": 2,
+    "correct_streak": 0,
+    "last_wrong_at": "2026-05-10",
+    "hook": "永远不信图形提示,看 auth.log"
   }
 ]

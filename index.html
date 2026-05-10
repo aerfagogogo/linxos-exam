@@ -49,7 +49,7 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0f0f1a;c
 .feedback .correct-answer{font-family:monospace;font-size:16px;color:#fff;margin-top:4px}
 .feedback .explain{font-size:13px;color:#aaa;margin-top:6px}
 /* 按钮（移至固定操作栏，保留原类名供 JS 使用） */
-.action-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0f0f1a;border-top:1px solid #2a2a4a;padding:10px 16px 10px}
+.action-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0f0f1a;border-top:1px solid #2a2a4a;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .btns{display:flex;gap:10px;max-width:600px;margin:0 auto}
 .btn{flex:1;padding:0;height:52px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
 .btn-check{background:#7c83fd;color:#fff}
